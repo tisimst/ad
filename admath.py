@@ -8,8 +8,8 @@ Examples:
   from admath import sin
   
   # Manipulation of numbers with uncertainties:
-  x = ad.AD(3)
-  print sin(x)  # prints ADF(0.141120008...)
+  x = ad.adfloat(3)
+  print sin(x)  # prints ad(0.141120008...)
 
   # The umath functions also work on regular Python floats:
   print sin(3)  # prints 0.141120008...  This is a Python float.
@@ -21,18 +21,19 @@ calculator.  Example:
   import ad
   from ad.admath import *  # Imports tan(), etc.
   
-  x = ad.AD(3, 0.1)
+  x = ad.adfloat(3, 0.1)
   print tan(x)  # tan() is the ad.admath.tan function
 
 The numbers with derivative tracking handled by this module are objects from
 the ad (automatic differentiation) module, from either the ADV or the ADF class.
 
-(c) 2013 by Abraham D. Lee (ADL) <tisimst@gmail.com>.
+(c) 2013 by Abraham Lee <tisimst@gmail.com>.
 Please send feature requests, bug reports, or feedback to this address.
 
 This software is released under a dual license.  (1) The BSD license.
 (2) Any other license, as long as it is obtained from the original
-author.'''
+author.
+
 """
 from __future__ import division
 import math
