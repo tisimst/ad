@@ -39,6 +39,7 @@ import math
 from ad import __author__,ADF,to_auto_diff,_calculate_derivatives
 
 __all__ = [
+    # math module equivalent functions
     'sin','asin','sinh','asinh',
     'cos','acos','cosh','acosh',
     'tan','atan','tanh','atanh',
