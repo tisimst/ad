@@ -27,3 +27,14 @@ ad-1.0.2
   for this method of the objects it operates on (i.e., ``numpy.sqrt``, 
   ``numpy.std``, etc.). Also updated the ``sqrt`` function in the ``admath``
   module to actually use the ``math.sqrt`` method to perform the calculations.
+
+ad-1.0.1
+========
+- Fixed some vectorization bugs
+
+ad-1.0
+======
+- 1.0: Initial release. Nearly full differentiation support for all 
+  math module functions.
+  
+

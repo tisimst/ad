@@ -17,7 +17,7 @@ Basic examples
 
     >>> from ad import AD
 
-    >>> x = AD(2.0)
+    >>> x = adfloat(2.0)
     >>> x
     ad(2.0)
 
@@ -36,7 +36,7 @@ Basic examples
     >>> print (2*x + 1000).d()  # no inputs shows dict of all derivatives
     {ad(2.0): 2.0}
 
-    >>> y = AD(3, tag='y')  # tags are useful for tracking original variables
+    >>> y = adfloat(3, tag='y')  # tags are useful for tracking original variables
     >>> y
     ad(3.0)
     >>> y.d(x)  # returns zero if the derivative doesn't exist
@@ -53,7 +53,7 @@ Basic examples
     [[0.0, 6.0], [6.0, 4.0]]
 
     >>> import numpy as np  # most numpy functions work out of the box
-    >>> arr = np.array(AD([1, 2, 3]))  # multiple input support
+    >>> arr = np.array(adfloat([1, 2, 3]))  # multiple input support
     >>> arr.sum()
     ad(6.0)
     >>> arr.max()
@@ -105,22 +105,7 @@ Contact
 Please send **feature requests, bug reports, or feedback** to 
 `Abraham Lee`_.
 
-Version History
-===============
 
-Main changes:
-
-- 1.0.2: Changed "ADF(...)", "ADV(...)", and "my_tag(...)" to just "ad(...)" 
-  when printing out the variables in either str or repr form (made a general 
-  constructor--thanks `EOL`_!). Updated the "_get_variables" method to not depend 
-  on the "d(...") method, but to access the hidden member "_lc" directly for 
-  getting first derivative variables.
-
-- 1.0.1: Smashed some vectorization bugs
-
-- 1.0: Initial release. Nearly full differentiation support for all 
-  `math`_ module functions.
-  
 .. _NumPy: http://numpy.scipy.org/
 .. _math: http://docs.python.org/library/math.html
 .. _Automatic differentiation: http://en.wikipedia.org/wiki/Automatic_differentiation
