@@ -1,0 +1,29 @@
+ad-1.0.2
+========
+
+- Default constructor ``AD`` renamed to ``adfloat`` to follow general coding 
+  guidelines better.
+  
+- Changed ``ADF(...)`` and ``ADV(...)`` to just ``ad(...)`` when printing out 
+  the variables in either str or repr form (made a general printer--credits to
+  EOL!).
+
+- Updated the ``_get_variables`` method to not depend on the ``d(...)`` method, 
+  but to access the hidden member ``_lc`` directly for getting first derivative
+  variables.
+
+- Renamed hidden member ``_hash`` to ``_trace``.
+
+- Made the constructor for arrays more robust and now the tag is applied to all
+  objects that get created.
+
+- Constructor is updated to return a copy of another AD object if supplied as an
+  input (i.e., ``x = adfloat(2); y = adfloat(x)``). This makes the two objects 
+  equivalent, copying the nominal value and the derivatives, but naturally they 
+  two objects are not identical (i.e., ``x==y`` returns ``True``, but ``x is y`` 
+  returns ``False``).
+
+- Added ``sqrt`` method to ``ADF`` class because some ``numpy`` functions look
+  for this method of the objects it operates on (i.e., ``numpy.sqrt``, 
+  ``numpy.std``, etc.). Also updated the ``sqrt`` function in the ``admath``
+  module to actually use the ``math.sqrt`` method to perform the calculations.
