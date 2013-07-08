@@ -123,8 +123,8 @@ def acos(x):
         # Calculation of the derivatives with respect to the arguments
         # of f (ad_funcs):
 
-        lc_wrt_args = [-1/sqrt(1-x**2)]
-        qc_wrt_args = [(sqrt(1-x**2)*(-x))/(x**4-2*x**2+1)]
+        lc_wrt_args = [-1/math.sqrt(1-x**2)]
+        qc_wrt_args = [x/(math.sqrt(1 - x**2)*(x**2 - 1))]
         cp_wrt_args = 0.0
 
         ########################################
@@ -168,8 +168,8 @@ def acosh(x):
         # Calculation of the derivatives with respect to the arguments
         # of f (ad_funcs):
 
-        lc_wrt_args = [-math.sin(x)]
-        qc_wrt_args = [-math.cos(x)]
+        lc_wrt_args = [1/math.sqrt(x**2 - 1)]
+        qc_wrt_args = [-x/(x**2 - 1)**1.5]
         cp_wrt_args = 0.0
 
         ########################################
@@ -213,8 +213,8 @@ def asin(x):
         # Calculation of the derivatives with respect to the arguments
         # of f (ad_funcs):
 
-        lc_wrt_args = [1/sqrt(1-x**2)]
-        qc_wrt_args = [-(sqrt(1-x**2)*(-x))/(x**4-2*x**2+1)]
+        lc_wrt_args = [1/math.sqrt(1 - x**2)]
+        qc_wrt_args = [-x/(math.sqrt(1 - x**2)*(x**2 - 1))]
         cp_wrt_args = 0.0
 
         ########################################
@@ -258,8 +258,8 @@ def asinh(x):
         # Calculation of the derivatives with respect to the arguments
         # of f (ad_funcs):
 
-        lc_wrt_args = [math.cos(x)]
-        qc_wrt_args = [-math.sin(x)]
+        lc_wrt_args = [1/math.sqrt(x**2 + 1)]
+        qc_wrt_args = [-x/(x**2 + 1)**1.5]
         cp_wrt_args = 0.0
 
         ########################################
@@ -303,8 +303,8 @@ def atan(x):
         # Calculation of the derivatives with respect to the arguments
         # of f (ad_funcs):
 
-        lc_wrt_args = [1/(x**2+1)]
-        qc_wrt_args = [-2*x/(x**4+x**2+1)]
+        lc_wrt_args = [1/(x**2 + 1)]
+        qc_wrt_args = [-2*x/(x**4 + 2*x**2 + 1)]
         cp_wrt_args = 0.0
 
         ########################################
@@ -348,8 +348,8 @@ def atanh(x):
         # Calculation of the derivatives with respect to the arguments
         # of f (ad_funcs):
 
-        lc_wrt_args = [1./(math.cos(x))**2]
-        qc_wrt_args = [2*math.sin(x)/(math.cos(x))**3]
+        lc_wrt_args = [-1./(x**2 - 1)]
+        qc_wrt_args = [2*x/(x**4 - 2*x**2 + 1)]
         cp_wrt_args = 0.0
 
         ########################################
@@ -771,10 +771,13 @@ def lgamma(x,y):
     """
     return log(fabs(gamma(x)))
     
-def log(x):
+def log(x, base=None):
     """
     The equivalent math.log function, modified to work with AD objects.
     """
+    if base is not None:
+        return log(x)/log(base)
+    
     if isinstance(x,ADF):
         
         ad_funcs = map(to_auto_diff,[x])
@@ -1192,16 +1195,4 @@ def ln(x):
     work with AD objects.
     """
     return log(x)
-
-def logB(x,base):
-    """
-    A convenience logarithm function for any base number system, modified to
-    work with AD objects.
-    
-    Note: base must be an integer >= 2
-    """
-    assert isinstance(base,int), 'base must be an integer'
-    assert base>1, 'base must be at least 2'
-    
-    return log(x)/log(base)
     
