@@ -15,7 +15,7 @@ Basic examples
 ==============
 ::
 
-    >>> from ad import AD
+    >>> from ad import adfloat
 
     >>> x = adfloat(2.0)
     >>> x
@@ -70,12 +70,7 @@ Main Features
 
 - **Transparent calculations with derivatives: no or little 
   modification of existing code** is needed, including when using
-  the `Numpy`_ module. The only function (that I have tested, and I 
-  certainly haven't tested most of them) that doesn't work right 
-  out of the box is ``numpy.std`` since it internally calls its 
-  builtin ``sqrt`` function. Two alternatives exist to work around 
-  this: 1) use ``**0.5`` or 2) using the ``admath.sqrt`` 
-  operator.
+  the `Numpy`_ module.
 - **Almost all mathematical operations** are supported, including
   functions from the standard `math`_ module (sin, cos, exp, erf, 
   etc.) with additional convenience trigonometric, hyperbolic, 

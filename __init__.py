@@ -13,20 +13,9 @@ __version__ = '.'.join(map(str, __version_info__))
 
 __author__ = 'Abraham Lee'
 
-__numeric_operators__ = [
-    # these are the class methods that make any class emulate numeric objects
-    'add','radd',
-    'mul','rmul',
-    'sub','rsub',
-    'div','rdiv',
-    'truediv','rtruediv',
-    'pow','rpow',
-    'neg','pos',
-    'abs']
-	
-__all__ = ['adfloat']
+__all__ = ['adfloat', 'ad']
 
-CONSTANT_TYPES = (float,int,complex,long)
+CONSTANT_TYPES = (float, int, long)
 
 def to_auto_diff(x):
     """
@@ -43,7 +32,7 @@ def to_auto_diff(x):
 
     #! In Python 2.6+, numbers.Number could be used instead, here:
     if isinstance(x, CONSTANT_TYPES):
-        # No variable => no derivative to define:
+        # constants have no derivatives to define:
         return ADF(x, {}, {}, {})
 
 #def partial_derivative(f, param_num):
@@ -393,14 +382,14 @@ class ADF(object):
     -------
     Initialize some ADV objects (tag not required, but useful)::
 
-        >>> x = ad(1,'x')
-        >>> y = ad(2,'y')
+        >>> x = adfloat(1, 'x')
+        >>> y = adfloat(2, 'y')
         
     Now some basic math, showing the derivatives of the final result. Note that
     if we don't supply an input to the derivative methods, a dictionary with
     all derivatives wrt the subsequently used ADV objects is returned::
         
-        >>> z = x+y
+        >>> z = x + y
         >>> z.d()
         {ad(1.0): 1.0, ad(2.0): 1.0}
         >>> z.d2()
@@ -410,22 +399,22 @@ class ADF(object):
         
     Let's take it a step further now and see if relationships hold::
         
-        >>> w = x*z # same as x*(x+y) = x**2 + x*y
+        >>> w = x*z  # same as x*(x+y) = x**2 + x*y
         >>> w.d(x)  # dw/dx = 2*x+y = 2*(1)+2 = 4
         4.0
-        >>> w.d2(x) # d2w/dx2 = 2
+        >>> w.d2(x)  # d2w/dx2 = 2
         2.0
-        >>> w.d2(y) # d2w/dy2 = 0
+        >>> w.d2(y)  # d2w/dy2 = 0
         0.0
-        >>> w.d2c(x,y) # d2w/dxdy = 1
+        >>> w.d2c(x, y)  # d2w/dxdy = 1
         1.0
 
     For convenience, we can get the gradient and hessian if we supply the order
     of the variables (useful in optimization routines)::
         
-        >>> w.gradient([x,y])
+        >>> w.gradient([x, y])
         [4.0, 1.0]
-        >>> w.hessian([x,y])
+        >>> w.hessian([x, y])
         [[2.0, 1.0], [1.0, 0.0]]
         
     You'll note that these are constructed using lists and nested lists instead
@@ -433,15 +422,15 @@ class ADF(object):
     much nicer and are a little easier to work with::
         
         >>> import numpy as np
-        >>> np.array(w.hessian([x,y]))
+        >>> np.array(w.hessian([x, y]))
         array([[ 2.,  1.],
                [ 1.,  0.]])
 
     """
     __slots__ = ['x', '_lc', '_qc', '_cp', 'tag', '_trace']
     
-    def __init__(self,value,lc,qc,cp):
-        self.x = float(value)  # I wish I didn't have to do this...
+    def __init__(self, value, lc, qc, cp):
+        self.x = float(value)  # doing this until someone complains...
         self._lc = lc
         self._qc = qc
         self._cp = cp
@@ -457,14 +446,14 @@ class ADF(object):
     def __str__(self):
         return self._to_general_representation(str)
 
-    def d(self,x=None):
+    def d(self, x=None):
         """
         Returns first-derivative with respect to x=ADV object. If x=None, then
         all first derivatives are returned. If no derivatives are found based 
         on x, zero is returned.
         """
         if x is not None:
-            if isinstance(x,ADF):
+            if isinstance(x, ADF):
                 try:
                     tmp = self._lc[x]
                 except KeyError:
@@ -475,14 +464,14 @@ class ADF(object):
         else:
             return self._lc
     
-    def d2(self,x=None):
+    def d2(self, x=None):
         """
         Returns second-derivative with respect to x=ADV object. If x=None, then
         all second derivatives are returned. If no derivatives are found based 
         on x, zero is returned.
         """
         if x is not None:
-            if isinstance(x,ADF):
+            if isinstance(x, ADF):
                 try:
                     tmp = self._qc[x]
                 except KeyError:
@@ -493,7 +482,7 @@ class ADF(object):
         else:
             return self._qc
     
-    def d2c(self,x=None,y=None):
+    def d2c(self, x=None, y=None):
         """
         Returns second cross-derivative with respect to two AD objects. If 
         x = None and y = None then all second derivatives are returned. If x==y,
@@ -504,12 +493,12 @@ class ADF(object):
             if x is y:
                 tmp = self.d2(x)
             else:
-                if isinstance(x,ADF) and isinstance(y,ADF):
+                if isinstance(x, ADF) and isinstance(y, ADF):
                     try:
-                        tmp = self._cp[(x,y)]
+                        tmp = self._cp[(x, y)]
                     except KeyError:
                         try:
-                            tmp = self._cp[(y,x)]
+                            tmp = self._cp[(y, x)]
                         except KeyError:
                             tmp = 0.0
                 else:
@@ -522,18 +511,20 @@ class ADF(object):
         else:
             return self._cp
     
-    def gradient(self,variables):
-        if not hasattr(variables,'__getitem__'):
-            return [self.d(variables)]
-        grad = [self.d(v) for v in variables]
+    def gradient(self, variables):
+        try:
+            grad = [self.d(v) for v in variables]
+        except TypeError:
+            grad = [self.d(variables)]
         return grad
         
-    def hessian(self,variables):
-        if not hasattr(variables,'__getitem__'):
-            return [[self.d2(variables)]]
-        hess = []
-        for v1 in variables:
-            hess.append([self.d2c(v1,v2) for v2 in variables])
+    def hessian(self, variables):
+        try:
+            hess = []
+            for v1 in variables:
+                hess.append([self.d2c(v1,v2) for v2 in variables])
+        except TypeError:
+            hess = [[self.d2(variables)]]
         return hess
         
     def sqrt(self):
@@ -543,7 +534,7 @@ class ADF(object):
         """
         return self**0.5
         
-    def _get_variables(self,ad_funcs):
+    def _get_variables(self, ad_funcs):
         # List of involved variables (Variable objects):
         variables = set()
         for expr in ad_funcs:
@@ -552,7 +543,7 @@ class ADF(object):
     
     def __add__(self, val):
         
-        ad_funcs = map(to_auto_diff,(self,val))
+        ad_funcs = map(to_auto_diff, (self, val))
 
         x = ad_funcs[0].x
         y = ad_funcs[1].x
@@ -571,7 +562,6 @@ class ADF(object):
 
         # Calculation of the derivatives with respect to the arguments
         # of f (ad_funcs):
-
         lc_wrt_args = [1., 1.]
         qc_wrt_args = [0., 0.]
         cp_wrt_args = 0.
@@ -579,10 +569,9 @@ class ADF(object):
         ########################################
         # Calculation of the derivative of f with respect to all the
         # variables (Variable) involved.
-
-        lc_wrt_vars,qc_wrt_vars,cp_wrt_vars = _calculate_derivatives(
-                                    ad_funcs,variables,lc_wrt_args,qc_wrt_args,
-                                    cp_wrt_args)
+        lc_wrt_vars, qc_wrt_vars, cp_wrt_vars = _calculate_derivatives(
+                                    ad_funcs, variables, lc_wrt_args,
+                                    qc_wrt_args, cp_wrt_args)
                                     
         # The function now returns an ADF object:
         return ADF(f, lc_wrt_vars, qc_wrt_vars, cp_wrt_vars)
@@ -595,7 +584,7 @@ class ADF(object):
         return self+val
 
     def __mul__(self, val):
-        ad_funcs = map(to_auto_diff,(self,val))
+        ad_funcs = map(to_auto_diff, (self, val))
 
         x = ad_funcs[0].x
         y = ad_funcs[1].x
@@ -615,7 +604,6 @@ class ADF(object):
 
         # Calculation of the derivatives with respect to the arguments
         # of f (ad_funcs):
-
         lc_wrt_args = [y, x]
         qc_wrt_args = [0., 0.]
         cp_wrt_args = 1.
@@ -623,10 +611,10 @@ class ADF(object):
         ########################################
         # Calculation of the derivative of f with respect to all the
         # variables (Variable) involved.
-
-        lc_wrt_vars,qc_wrt_vars,cp_wrt_vars = _calculate_derivatives(
-                                    ad_funcs,variables,lc_wrt_args,qc_wrt_args,
-                                    cp_wrt_args)
+        lc_wrt_vars, qc_wrt_vars, cp_wrt_vars = _calculate_derivatives(
+                                    ad_funcs, variables, lc_wrt_args,
+                                    qc_wrt_args, cp_wrt_args)
+                                    
                                     
         # The function now returns an ADF object:
         return ADF(f, lc_wrt_vars, qc_wrt_vars, cp_wrt_vars)
@@ -641,8 +629,8 @@ class ADF(object):
     def __div__(self, val):
         return self.__truediv__(val)
     
-    def __truediv__(self,val):
-        ad_funcs = map(to_auto_diff,(self,val))
+    def __truediv__(self, val):
+        ad_funcs = map(to_auto_diff, (self, val))
 
         x = ad_funcs[0].x
         y = ad_funcs[1].x
@@ -662,7 +650,6 @@ class ADF(object):
 
         # Calculation of the derivatives with respect to the arguments
         # of f (ad_funcs):
-
         lc_wrt_args = [1./y, -x/y**2]
         qc_wrt_args = [0., 2*x/y**3]
         cp_wrt_args = -1./y**2
@@ -670,10 +657,10 @@ class ADF(object):
         ########################################
         # Calculation of the derivative of f with respect to all the
         # variables (Variable) involved.
-
-        lc_wrt_vars,qc_wrt_vars,cp_wrt_vars = _calculate_derivatives(
-                                    ad_funcs,variables,lc_wrt_args,qc_wrt_args,
-                                    cp_wrt_args)
+        lc_wrt_vars, qc_wrt_vars, cp_wrt_vars = _calculate_derivatives(
+                                    ad_funcs, variables, lc_wrt_args,
+                                    qc_wrt_args, cp_wrt_args)
+                                    
                                     
         # The function now returns an ADF object:
         return ADF(f, lc_wrt_vars, qc_wrt_vars, cp_wrt_vars)
@@ -698,17 +685,17 @@ class ADF(object):
         This method shouldn't need any modification if __add__ and __mul__ have
         been defined
         """
-        return self+(-1*val)
+        return self + (-1*val)
 
-    def __rsub__(self,val):
+    def __rsub__(self, val):
         """
         This method shouldn't need any modification if __add__ and __mul__ have
         been defined
         """
-        return -1*self+val
+        return -1*self + val
 
     def __pow__(self, val):
-        ad_funcs = map(to_auto_diff,(self,val))
+        ad_funcs = map(to_auto_diff, (self, val))
         
         x = ad_funcs[0].x
         y = ad_funcs[1].x
@@ -742,11 +729,11 @@ class ADF(object):
         ########################################
         # Calculation of the derivative of f with respect to all the
         # variables (Variable) involved.
-
-        lc_wrt_vars,qc_wrt_vars,cp_wrt_vars = _calculate_derivatives(
-                                    ad_funcs,variables,lc_wrt_args,qc_wrt_args,
-                                    cp_wrt_args)
+        lc_wrt_vars, qc_wrt_vars, cp_wrt_vars = _calculate_derivatives(
+                                    ad_funcs, variables, lc_wrt_args,
+                                    qc_wrt_args, cp_wrt_args)
                                     
+                                   
         # The function now returns an ADF object:
         return ADF(f, lc_wrt_vars, qc_wrt_vars, cp_wrt_vars)
 
@@ -760,7 +747,7 @@ class ADF(object):
         return self
 
     def __abs__(self):
-        ad_funcs = map(to_auto_diff,[self])
+        ad_funcs = map(to_auto_diff, [self])
 
         x = ad_funcs[0].x
         
@@ -793,10 +780,10 @@ class ADF(object):
         ########################################
         # Calculation of the derivative of f with respect to all the
         # variables (Variable) involved.
-
-        lc_wrt_vars,qc_wrt_vars,cp_wrt_vars = _calculate_derivatives(
-                                    ad_funcs,variables,lc_wrt_args,qc_wrt_args,
-                                    cp_wrt_args)
+        lc_wrt_vars, qc_wrt_vars, cp_wrt_vars = _calculate_derivatives(
+                                    ad_funcs, variables, lc_wrt_args,
+                                    qc_wrt_args, cp_wrt_args)
+                                    
                                     
         # The function now returns an ADF object:
         return ADF(f, lc_wrt_vars, qc_wrt_vars, cp_wrt_vars)
@@ -813,22 +800,22 @@ class ADF(object):
     def __complex__(self):
         return complex(self.x)
         
-    def __eq__(self,val):
-        return float.__eq__(float(self),float(val))
+    def __eq__(self, val):
+        return float.__eq__(float(self), float(val))
     
-    def __ne__(self,val):
+    def __ne__(self, val):
         return not self==val
 
-    def __lt__(self,val):
-        return float.__lt__(float(self),float(val))
+    def __lt__(self, val):
+        return float.__lt__(float(self), float(val))
     
-    def __le__(self,val):
-        return (self < val) or (self==val)
+    def __le__(self, val):
+        return (self<val) or (self==val)
     
-    def __gt__(self,val):
-        return float.__gt__(float(self),float(val))
+    def __gt__(self, val):
+        return float.__gt__(float(self), float(val))
     
-    def __ge__(self,val):
+    def __ge__(self, val):
         return (self>val) or (self==val)
     
     def __nonzero__(self):
@@ -839,14 +826,15 @@ class ADV(ADF):
     A convenience class for distinguishing between FUNCTIONS (ADF) and VARIABLES
     """
     def __init__(self, value, tag=None):
-        super(ADV, self).__init__(value,{self:1.0},{self:0.0},{})
+        # the derivative of a variable wrt itself is 1 and the second is 0
+        super(ADV, self).__init__(value, {self:1.0}, {self:0.0}, {})
         self.tag = tag
 
         # by generating this random trace, it should preserve relations even
         # after pickling and un-pickling
         self._trace = long(randint(1,100000000))
         
-def adfloat(x,tag=None):
+def adfloat(x, tag=None):
     """
     Constructor of automatic differentiation (AD) variables
     
@@ -876,7 +864,7 @@ def adfloat(x,tag=None):
         >>> from ad import adfloat
         >>> x = adfloat(2)
         >>> x
-        ad(2)
+        ad(2.0)
         >>> x.d(x)
         1.0
     
@@ -914,7 +902,7 @@ def adfloat(x,tag=None):
     supplying a sequence of values--the ``tag`` keyword is applied to all the
     new objects:
         
-        >>> x,y,z = adfloat([2, 0.5, 3.1415])
+        >>> x, y, z = adfloat([2, 0.5, 3.1415])
     
     From here, almost any ``numpy`` operation can be performed (i.e., sum, 
     etc.), though I haven't performed extensive testing to know which functions
@@ -922,13 +910,13 @@ def adfloat(x,tag=None):
         
     """
     try:
-        return [adfloat(x[i],tag) for i,xi in enumerate(x)]
+        return [adfloat(x[i], tag) for i,xi in enumerate(x)]
     except TypeError:
-        if isinstance(x,ADF):
+        if isinstance(x, ADF):
             cp = copy.copy(x)
             return cp
         elif isinstance(x, CONSTANT_TYPES):
-            return ADV(x,tag)
+            return ADV(x, tag)
 
     raise NotImplementedError(
         'Automatic differentiation not yet supported for {:} objects'.format(
