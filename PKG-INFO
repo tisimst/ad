@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: ad
-Version: 1.0.1
+Version: 1.0.2
 Summary: Fast, transparent, calculations of first and second-order automatic differentiation package
 Home-page: http://pypi.python.org/pypi/ad
 Author: Abraham Lee
@@ -23,15 +23,15 @@ Description: Overview
         ==============
         ::
         
-            >>> from ad import AD
+            >>> from ad import adfloat
         
-            >>> x = AD(2.0)
+            >>> x = adfloat(2.0)
             >>> x
-            ADV(2.0)
+            ad(2.0)
         
             >>> square = x**2
             >>> square
-            ADF(4.0)
+            ad(4.0)
             >>> square.d(x)  # get the first derivative wrt x
             4.0
             >>> square.d2(x)  # get the second derivative wrt x
@@ -39,20 +39,20 @@ Description: Overview
         
             >>> from ad.admath import *  # sin, cos, log, exp, sqrt, etc.
             >>> sin(1 + x**2)
-            ADF(-0.958924274663)
+            ad(-0.958924274663)
         
             >>> print (2*x + 1000).d()  # no inputs shows dict of all derivatives
-            {ADV(2.0): 2.0}
+            {ad(2.0): 2.0}
         
-            >>> y = AD(3, tag='y')  # tags are useful for tracking original variables
+            >>> y = adfloat(3, tag='y')  # tags are useful for tracking original variables
             >>> y
-            y(3.0)
+            ad(3.0)
             >>> y.d(x)  # returns zero if the derivative doesn't exist
             0.0
         
             >>> z = x*y**2
             >>> z
-            ADF(18.0)
+            ad(18.0)
             >>> z.gradient([x, y])  # show the gradient in the order given
             [9.0, 12.0]
             >>> z.d2c(x, y)  # second cross-derivatives, order doesn't matter -> (x,y) or (y,x)
@@ -61,29 +61,24 @@ Description: Overview
             [[0.0, 6.0], [6.0, 4.0]]
         
             >>> import numpy as np  # most numpy functions work out of the box
-            >>> arr = np.array(AD([1, 2, 3]))  # multiple input support
+            >>> arr = np.array(adfloat([1, 2, 3]))  # multiple input support
             >>> arr.sum()
-            ADF(6.0)
+            ad(6.0)
             >>> arr.max()
-            ADV(3.0)
+            ad(3.0)
             >>> arr.mean()
-            ADF(2.0)
+            ad(2.0)
             >>> arr.var()  # array variance
-            ADF(0.666666666667)
+            ad(0.666666666667)
             >>> sqrt(arr)  # vectorized operations supported with ad operators
-            array([ADF(1.0), ADF(1.41421356237), ADF(1.73205080757)], dtype=object)
+            array([ad(1.0), ad(1.41421356237), ad(1.73205080757)], dtype=object)
         
         Main Features
         =============
         
         - **Transparent calculations with derivatives: no or little 
           modification of existing code** is needed, including when using
-          the `Numpy`_ module. The only function (that I have tested, and I 
-          certainly haven't tested most of them) that doesn't work right 
-          out of the box is ``numpy.std`` since it internally calls its 
-          builtin ``sqrt`` function. Two alternatives exist to work around 
-          this: 1) use ``**0.5`` or 2) using the ``admath.sqrt`` 
-          operator.
+          the `Numpy`_ module.
         - **Almost all mathematical operations** are supported, including
           functions from the standard `math`_ module (sin, cos, exp, erf, 
           etc.) with additional convenience trigonometric, hyperbolic, 
@@ -113,19 +108,12 @@ Description: Overview
         Please send **feature requests, bug reports, or feedback** to 
         `Abraham Lee`_.
         
-        Version History
-        ===============
         
-        Main changes:
-        
-        - 1.0.1: Smashed some vectorization bugs
-        - 1.0: Initial release. Nearly full differentiation support for all 
-          `math`_ module functions.
-          
         .. _NumPy: http://numpy.scipy.org/
         .. _math: http://docs.python.org/library/math.html
         .. _Automatic differentiation: http://en.wikipedia.org/wiki/Automatic_differentiation
         .. _chain rule: http://en.wikipedia.org/wiki/Chain_rule
+        .. _EOL: http://www.linkedin.com/pub/eric-lebigot/22/293/277
         .. _Abraham Lee: mailto:tisimst@gmail.com
         
         
