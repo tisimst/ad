@@ -1,3 +1,11 @@
+ad-1.0.3
+========
+
+- Fixed an issue with using Numpy arrays as input to ``adfloat`` in Python 3.3.
+
+- Renamed ``_calculate_derivatives`` method to more appropriately be called 
+  ``_apply_chain_rule``.
+
 ad-1.0.2
 ========
 

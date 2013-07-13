@@ -87,13 +87,28 @@ You have several easy, convenient options to install the ``ad`` package
 (administrative privileges may be required)
 
 1. Download the package files below, unzip to any directory, and run 
-   ``python setup.py install`` from the command-line
+   ``python setup.py install`` from the command-line.
+   
 2. Simply copy the unzipped ``ad-XYZ`` directory to any other location 
-   that python can find it and rename it ``ad``
+   that python can find it and rename it ``ad``.
+   
 3. If ``setuptools`` is installed, run ``easy_install --upgrade ad`` 
-   from the command-line
-4. If ``pip`` is installed, run ``pip --upgrade ad`` from the command-line
+   from the command-line.
+   
+4. If ``pip`` is installed, run ``pip --upgrade ad`` from the command-line.
 
+Python 3
+========
+
+To use this package with Python 3.x, you will need to run the ``2to3`` tool at
+the command-line using the following syntax while in the unzipped ``ad`` 
+directory::
+
+    $ 2to3 -w -f all *.py
+    
+This should take care of the main changes required. If bugs continue to pop up,
+please email the author.
+    
 Contact
 =======
 
