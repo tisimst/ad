@@ -4,7 +4,7 @@ with open('README.txt') as file:
     long_description = file.read()
 
 setup(name='ad',
-    version='1.0.2',
+    version='1.0.3',
     author='Abraham Lee',
     description='Fast, transparent, calculations of first and second-order automatic differentiation package',
     author_email='tisimst@gmail.com',
