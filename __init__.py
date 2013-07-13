@@ -8,7 +8,7 @@ import math
 import copy
 from random import randint
 
-__version_info__ = (1, 0, 2)
+__version_info__ = (1, 0, 3)
 __version__ = '.'.join(map(str, __version_info__))
 
 __author__ = 'Abraham Lee'
@@ -297,14 +297,14 @@ def to_auto_diff(x):
 ##    # Calculation of the derivative of f with respect to all the
 ##    # variables (Variable) involved.
 ##
-##    lc_wrt_vars,qc_wrt_vars,cp_wrt_vars = _calculate_derivatives(
+##    lc_wrt_vars,qc_wrt_vars,cp_wrt_vars = _apply_chain_rule(
 ##                                ad_funcs,variables,lc_wrt_args,qc_wrt_args,
 ##                                cp_wrt_args)
 ##                                
 ##    # The function now returns an ADF object:
 ##    return ADF(f_nominal, lc_wrt_vars, qc_wrt_vars, cp_wrt_vars)
 
-def _calculate_derivatives(ad_funcs,variables,lc_wrt_args,qc_wrt_args,
+def _apply_chain_rule(ad_funcs,variables,lc_wrt_args,qc_wrt_args,
                            cp_wrt_args):
     """
     This funciton applies the first and second-order chain rule to calculate the
@@ -400,7 +400,7 @@ class ADF(object):
     Let's take it a step further now and see if relationships hold::
         
         >>> w = x*z  # same as x*(x+y) = x**2 + x*y
-        >>> w.d(x)  # dw/dx = 2*x+y = 2*(1)+2 = 4
+        >>> w.d(x)  # dw/dx = 2*x+y = 2*(1) + (2) = 4
         4.0
         >>> w.d2(x)  # d2w/dx2 = 2
         2.0
@@ -436,6 +436,9 @@ class ADF(object):
         self._cp = cp
         self.tag = None
         self._trace = None
+    
+    def __hash__(self):
+      return id(self)
     
     def _to_general_representation(self, str_func):
         return 'ad({:})'.format(str_func(self.x))
@@ -569,7 +572,7 @@ class ADF(object):
         ########################################
         # Calculation of the derivative of f with respect to all the
         # variables (Variable) involved.
-        lc_wrt_vars, qc_wrt_vars, cp_wrt_vars = _calculate_derivatives(
+        lc_wrt_vars, qc_wrt_vars, cp_wrt_vars = _apply_chain_rule(
                                     ad_funcs, variables, lc_wrt_args,
                                     qc_wrt_args, cp_wrt_args)
                                     
@@ -611,7 +614,7 @@ class ADF(object):
         ########################################
         # Calculation of the derivative of f with respect to all the
         # variables (Variable) involved.
-        lc_wrt_vars, qc_wrt_vars, cp_wrt_vars = _calculate_derivatives(
+        lc_wrt_vars, qc_wrt_vars, cp_wrt_vars = _apply_chain_rule(
                                     ad_funcs, variables, lc_wrt_args,
                                     qc_wrt_args, cp_wrt_args)
                                     
@@ -657,7 +660,7 @@ class ADF(object):
         ########################################
         # Calculation of the derivative of f with respect to all the
         # variables (Variable) involved.
-        lc_wrt_vars, qc_wrt_vars, cp_wrt_vars = _calculate_derivatives(
+        lc_wrt_vars, qc_wrt_vars, cp_wrt_vars = _apply_chain_rule(
                                     ad_funcs, variables, lc_wrt_args,
                                     qc_wrt_args, cp_wrt_args)
                                     
@@ -729,7 +732,7 @@ class ADF(object):
         ########################################
         # Calculation of the derivative of f with respect to all the
         # variables (Variable) involved.
-        lc_wrt_vars, qc_wrt_vars, cp_wrt_vars = _calculate_derivatives(
+        lc_wrt_vars, qc_wrt_vars, cp_wrt_vars = _apply_chain_rule(
                                     ad_funcs, variables, lc_wrt_args,
                                     qc_wrt_args, cp_wrt_args)
                                     
@@ -780,7 +783,7 @@ class ADF(object):
         ########################################
         # Calculation of the derivative of f with respect to all the
         # variables (Variable) involved.
-        lc_wrt_vars, qc_wrt_vars, cp_wrt_vars = _calculate_derivatives(
+        lc_wrt_vars, qc_wrt_vars, cp_wrt_vars = _apply_chain_rule(
                                     ad_funcs, variables, lc_wrt_args,
                                     qc_wrt_args, cp_wrt_args)
                                     
@@ -851,7 +854,7 @@ def adfloat(x, tag=None):
         
     Returns
     -------
-    a : ADV object
+    ad : an ADV object
         This object will contain information about its nominal value as any
         variable normally would with additional information about its first and
         second derivatives at the nominal value.
@@ -910,7 +913,7 @@ def adfloat(x, tag=None):
         
     """
     try:
-        return [adfloat(x[i], tag) for i,xi in enumerate(x)]
+        return [adfloat(float(xi), tag) for i,xi in enumerate(x)]
     except TypeError:
         if isinstance(x, ADF):
             cp = copy.copy(x)
