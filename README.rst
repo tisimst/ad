@@ -23,7 +23,7 @@ From the Wikipedia entry on `Automatic differentiation`_ (AD):
 Basic examples
 --------------
 
-Let's start with the necessary import::
+Let's start with the main import::
 
     >>> from ad import adfloat
 
