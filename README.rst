@@ -75,7 +75,7 @@ Calculating derivatives (evaluated at the given input values)::
     >>> w.d2c(x, z)  # second cross-derivatives, order doesn't matter
     6.0
 
-    >>> w.d2c(z, z)  # equivalent to "w.d2(x)"
+    >>> w.d2c(z, z)  # equivalent to "w.d2(z)"
     4.0
     
     >>> w.d()  # a dict of all relevant derivatives shown if no input
