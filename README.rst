@@ -22,55 +22,90 @@ From the Wikipedia entry on `Automatic differentiation`_ (AD):
 
 Basic examples
 --------------
-::
+
+Let's start with the necessary import::
 
     >>> from ad import adfloat
+
+Creating AD objects (either a scalar or an array is acceptable)::
 
     >>> x = adfloat(2.0)
     >>> x
     ad(2.0)
 
+    >>> y = adfloat([1,2,3])
+    >>> y
+    [ad(1.0), ad(2.0), ad(3.0)]
+
+    >>> z = adfloat(3, tag='z')  # tags can help track variables
+    >>> z
+    ad(3.0)
+
+Now for some math::
+
     >>> square = x**2
     >>> square
     ad(4.0)
-    >>> square.d(x)  # get the first derivative wrt x
-    4.0
-    >>> square.d2(x)  # get the second derivative wrt x
-    2.0
+
+    >>> sum_value = sum(y)
+    >>> sum_value
+    ad(6.0)
+
+    >>> w = x*z**2
+    >>> w
+    ad(18.0)
+
+Using more advanced math functions::
 
     >>> from ad.admath import *  # sin, cos, log, exp, sqrt, etc.
     >>> sin(1 + x**2)
     ad(-0.958924274663)
 
-    >>> print (2*x + 1000).d()  # no inputs shows dict of all derivatives
-    {ad(2.0): 2.0}
+Calculating derivatives (evaluated at the given input values)::
 
-    >>> y = adfloat(3, tag='y')  # tags are useful for tracking original variables
-    >>> y
-    ad(3.0)
-    >>> y.d(x)  # returns zero if the derivative doesn't exist
+    >>> square.d(x)  # get the first derivative wrt x
+    4.0
+
+    >>> square.d2(x)  # get the second derivative wrt x
+    2.0
+
+    >>> z.d(x)  # returns zero if the derivative doesn't exist
     0.0
 
-    >>> z = x*y**2
-    >>> z
-    ad(18.0)
-    >>> z.gradient([x, y])  # show the gradient in the order given
-    [9.0, 12.0]
-    >>> z.d2c(x, y)  # second cross-derivatives, order doesn't matter -> (x,y) or (y,x)
+    >>> w.d2c(x, z)  # second cross-derivatives, order doesn't matter
     6.0
-    >>> z.hessian([x, y])
-    [[0.0, 6.0], [6.0, 4.0]]
 
-    >>> import numpy as np  # most numpy functions work out of the box
+    >>> w.d2c(x, x)  # equivalent to "w.d2(x)"
+    0.0
+
+Some convenience functions (useful in optimization)::
+
+    >>> w.gradient([x, z])  # show the gradient in the order given
+    [9.0, 12.0]
+
+    >>> w.hessian([x, z])
+    [[0.0, 6.0], [6.0, 4.0]]
+    
+    >>> sum_value.gradient(y)  # works well with input arrays
+    [1.0, 1.0, 1.0]
+
+Working with NumPy_ arrays (most functions should work out-of-the-box)::
+
+    >>> import numpy as np
     >>> arr = np.array(adfloat([1, 2, 3]))  # multiple input support
+
     >>> arr.sum()
     ad(6.0)
+
     >>> arr.max()
     ad(3.0)
+
     >>> arr.mean()
     ad(2.0)
+
     >>> arr.var()  # array variance
     ad(0.666666666667)
+
     >>> sqrt(arr)  # vectorized operations supported with ad operators
     array([ad(1.0), ad(1.41421356237), ad(1.73205080757)], dtype=object)
 
