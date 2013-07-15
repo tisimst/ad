@@ -391,11 +391,11 @@ class ADF(object):
         
         >>> z = x + y
         >>> z.d()
-        {ad(1.0): 1.0, ad(2.0): 1.0}
+        {ad(1.0, x): 1.0, ad(2.0, y): 1.0}
         >>> z.d2()
-        {ad(1.0): 0.0, ad(2.0): 0.0}
+        {ad(1.0, x): 0.0, ad(2.0, y): 0.0}
         >>> z.d2c()
-        {(ad(1.0), ad(2.0)): 0.0}
+        {(ad(1.0, x), ad(2.0, y)): 0.0}
         
     Let's take it a step further now and see if relationships hold::
         
@@ -441,7 +441,10 @@ class ADF(object):
       return id(self)
     
     def _to_general_representation(self, str_func):
-        return 'ad({:})'.format(str_func(self.x))
+        if self.tag is None:
+            return 'ad({:})'.format(str_func(self.x))
+        else:
+            return 'ad({:}, {:})'.format(str_func(self.x), str_func(self.tag))
         
     def __repr__(self):
         return self._to_general_representation(repr)
