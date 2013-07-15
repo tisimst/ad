@@ -39,7 +39,7 @@ Creating AD objects (either a scalar or an array is acceptable)::
 
     >>> z = adfloat(3, tag='z')  # tags can help track variables
     >>> z
-    ad(3.0)
+    ad(3.0, z)
 
 Now for some math::
 
@@ -77,6 +77,9 @@ Calculating derivatives (evaluated at the given input values)::
 
     >>> w.d2c(z, z)  # equivalent to "w.d2(x)"
     4.0
+    
+    >>> w.d()  # a dict of all relevant derivatives shown if no input
+    {ad(2.0): 9.0, ad(3.0, z): 12.0}
 
 Some convenience functions (useful in optimization)::
 
