@@ -127,12 +127,13 @@ Please send **feature requests, bug reports, or feedback** to
 Acknowledgements
 ----------------
 
-The author expresses his thanks to `Eric O. LEBIGOT (EOL)`_ for providing code insight and inspiration.
+The author expresses his thanks to `Eric O. LEBIGOT (EOL)`_, author of the uncertainties_ package, for providing code insight and inspiration.
 
 
 .. _NumPy: http://numpy.scipy.org/
 .. _math: http://docs.python.org/library/math.html
 .. _Automatic differentiation: http://en.wikipedia.org/wiki/Automatic_differentiation
 .. _Eric O. LEBIGOT (EOL): http://www.linkedin.com/pub/eric-lebigot/22/293/277
+.. _uncertainties: http://pypi.python.org/pypi/uncertainties
 .. _Abraham Lee: mailto:tisimst@gmail.com
 
