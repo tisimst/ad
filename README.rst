@@ -75,8 +75,8 @@ Calculating derivatives (evaluated at the given input values)::
     >>> w.d2c(x, z)  # second cross-derivatives, order doesn't matter
     6.0
 
-    >>> w.d2c(x, x)  # equivalent to "w.d2(x)"
-    0.0
+    >>> w.d2c(z, z)  # equivalent to "w.d2(x)"
+    4.0
 
 Some convenience functions (useful in optimization)::
 
