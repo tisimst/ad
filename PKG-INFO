@@ -2,7 +2,7 @@ Metadata-Version: 1.1
 Name: ad
 Version: 1.0.3
 Summary: Fast, transparent, calculations of first and second-order automatic differentiation package
-Home-page: http://pypi.python.org/pypi/ad
+Home-page: https://github.com/tisimst/ad
 Author: Abraham Lee
 Author-email: tisimst@gmail.com
 License: BSD License
