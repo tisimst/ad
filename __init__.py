@@ -5,26 +5,28 @@ Created on Thu Apr 11 12:52:09 2013
 @author: tisimst
 """
 import math
+import cmath
 import copy
 from random import randint
 
-__version_info__ = (1, 0, 3)
+__version_info__ = (1, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 __author__ = 'Abraham Lee'
 
-__all__ = ['adfloat', 'ad']
+__all__ = ['adnumber']
 
-CONSTANT_TYPES = (float, int, long)
+CONSTANT_TYPES = (float, int, long, complex)
 
 def to_auto_diff(x):
     """
-    Transforms x into a constant automatically differentiated function (ADF),
-    unless it is already an ADF (in which case x is returned unchanged).
+    Transforms x into a automatically differentiated function (ADF),
+    unless it is already an ADF (or a subclass of it), in which case x is 
+    returned unchanged.
 
     Raises an exception unless 'x' belongs to some specific classes of
-    objects that are known not to depend on AffineScalarFunc objects
-    (which then cannot be considered as constants).
+    objects that are known not to depend on ADF objects (which then cannot be
+    considered as constants).
     """
 
     if isinstance(x, ADF):
@@ -35,6 +37,11 @@ def to_auto_diff(x):
         # constants have no derivatives to define:
         return ADF(x, {}, {}, {})
 
+    raise NotImplementedError(
+        'Automatic differentiation not yet supported for {:} objects'.format(
+        type(x))
+        )
+        
 #def partial_derivative(f, param_num):
 #    """
 #    Returns a function that numerically calculates the partial
@@ -307,14 +314,14 @@ def to_auto_diff(x):
 def _apply_chain_rule(ad_funcs,variables,lc_wrt_args,qc_wrt_args,
                            cp_wrt_args):
     """
-    This funciton applies the first and second-order chain rule to calculate the
+    This function applies the first and second-order chain rule to calculate the
     derivatives with respect to original variables (i.e., objects created with
-    the ``adfloat(...)`` constructor).
+    the ``adnumber(...)`` constructor).
     
     For reference:
-    - ``lc_...`` refers to "linear coefficients" or first-order terms
-    - ``qc_...`` refers to "quadratic coefficients" or pure second-order terms
-    - ``cp_...`` refers to "cross-product" second-order terms
+    - ``lc`` refers to "linear coefficients" or first-order terms
+    - ``qc`` refers to "quadratic coefficients" or pure second-order terms
+    - ``cp`` refers to "cross-product" second-order terms
     
     """
     # Initial value (is updated below):
@@ -363,14 +370,17 @@ def _apply_chain_rule(ad_funcs,variables,lc_wrt_args,qc_wrt_args,
     
 class ADF(object):
     """
-    The ADF (Automatically Differentiated Function) class contains information
-    about the results of a previous operation on any two objects where at least
-    one is an ADF or ADV object. An ADF object has class members '_lc', '_qc', 
-    and '_cp' to contain first order derivatives, second-order derivatives, and
-    cross-product derivatives, respectively, of all ADV objects in the ADF's 
-    lineage. When requesting a cross-product term, either order of objects may 
-    be used since, mathematically, they are equivalent. For example, if z(x, y),
-    then::
+    The ADF (Automatically Differentiated Function) class contains derivative
+    information about the results of a previous operation on any two objects 
+    where at least one is an ADF or ADV object. 
+    
+    An ADF object has class members '_lc', '_qc', and '_cp' to contain 
+    first-order derivatives, second-order derivatives, and cross-product 
+    derivatives, respectively, of all ADV objects in the ADF's lineage. When 
+    requesting a cross-product term, either order of objects may be used since, 
+    mathematically, they are equivalent. 
+    
+    For example, if z = z(x, y), then::
 
           2       2
          d z     d z
@@ -382,8 +392,8 @@ class ADF(object):
     -------
     Initialize some ADV objects (tag not required, but useful)::
 
-        >>> x = adfloat(1, 'x')
-        >>> y = adfloat(2, 'y')
+        >>> x = adnumber(1, tag='x')
+        >>> y = adnumber(2, tag='y')
         
     Now some basic math, showing the derivatives of the final result. Note that
     if we don't supply an input to the derivative methods, a dictionary with
@@ -429,22 +439,36 @@ class ADF(object):
     """
     __slots__ = ['x', '_lc', '_qc', '_cp', 'tag', '_trace']
     
-    def __init__(self, value, lc, qc, cp):
-        self.x = float(value)  # doing this until someone complains...
+    def __init__(self, value, lc, qc, cp, tag=None):
+        # I want to be able to perform complex derivatives, so "x" will
+        # assume whatever type of object is put into it.
+        self.x = value
         self._lc = lc
         self._qc = qc
         self._cp = cp
-        self.tag = None
+        self.tag = tag
         self._trace = None
     
     def __hash__(self):
       return id(self)
     
+    @property
+    def real(self):
+        return self.x.real
+    
+    @property
+    def imag(self):
+        return self.x.imag
+    
     def _to_general_representation(self, str_func):
+        """
+        This provides the general representation of the underlying numeric 
+        object, but assumes self.tag is a string object.
+        """
         if self.tag is None:
             return 'ad({:})'.format(str_func(self.x))
         else:
-            return 'ad({:}, {:})'.format(str_func(self.x), str_func(self.tag))
+            return 'ad({:}, {:})'.format(str_func(self.x), str(self.tag))
         
     def __repr__(self):
         return self._to_general_representation(repr)
@@ -454,9 +478,41 @@ class ADF(object):
 
     def d(self, x=None):
         """
-        Returns first-derivative with respect to x=ADV object. If x=None, then
-        all first derivatives are returned. If no derivatives are found based 
-        on x, zero is returned.
+        Returns first derivative with respect to x (an AD object).
+        
+        Optional
+        --------
+        x : AD object
+            Technically this can be any object, but to make it practically 
+            useful, ``x`` should be a single object created using the 
+            ``adnumber(...)`` constructor. If ``x=None``, then all associated 
+            first derivatives are returned in the form of a ``dict`` object.
+                    
+        Returns
+        -------
+        df/dx : scalar
+            The derivative (if it exists), otherwise, zero.
+            
+        Examples
+        --------
+        ::
+            >>> x = adnumber(2)
+            >>> y = 3
+            >>> z = x**y
+            
+            >>> z.d()
+            {ad(2): 12.0}
+            
+            >>> z.d(x)
+            12.0
+            
+            >>> z.d(y)  # derivative wrt y is zero since it's not an AD object
+            0.0
+            
+        See Also
+        --------
+        d2, d2c, gradient, hessian
+        
         """
         if x is not None:
             if isinstance(x, ADF):
@@ -464,7 +520,7 @@ class ADF(object):
                     tmp = self._lc[x]
                 except KeyError:
                     tmp = 0.0
-                return tmp
+                return tmp if tmp.imag else tmp.real
             else:
                 return 0.0
         else:
@@ -472,9 +528,41 @@ class ADF(object):
     
     def d2(self, x=None):
         """
-        Returns second-derivative with respect to x=ADV object. If x=None, then
-        all second derivatives are returned. If no derivatives are found based 
-        on x, zero is returned.
+        Returns pure second derivative with respect to x (an AD object).
+        
+        Optional
+        --------
+        x : AD object
+            Technically this can be any object, but to make it practically 
+            useful, ``x`` should be a single object created using the 
+            ``adnumber(...)`` constructor. If ``x=None``, then all associated 
+            second derivatives are returned in the form of a ``dict`` object.
+                    
+        Returns
+        -------
+        d2f/dx2 : scalar
+            The pure second derivative (if it exists), otherwise, zero.
+            
+        Examples
+        --------
+        ::
+            >>> x = adnumber(2.5)
+            >>> y = 3
+            >>> z = x**y
+            
+            >>> z.d2()
+            {ad(2): 15.0}
+            
+            >>> z.d2(x)
+            15.0
+            
+            >>> z.d2(y)  # second deriv wrt y is zero since not an AD object
+            0.0
+            
+        See Also
+        --------
+        d, d2c, gradient, hessian
+        
         """
         if x is not None:
             if isinstance(x, ADF):
@@ -482,7 +570,7 @@ class ADF(object):
                     tmp = self._qc[x]
                 except KeyError:
                     tmp = 0.0
-                return tmp
+                return tmp if tmp.imag else tmp.real
             else:
                 return 0.0
         else:
@@ -490,10 +578,52 @@ class ADF(object):
     
     def d2c(self, x=None, y=None):
         """
-        Returns second cross-derivative with respect to two AD objects. If 
-        x = None and y = None then all second derivatives are returned. If x==y,
-        then the pure second derivative of x is returned. If no derivatives are 
-        found based on x and y, zero is returned.
+        Returns cross-product second derivative with respect to two objects, x
+        and y (preferrably AD objects). If both inputs are ``None``, then a dict
+        containing all cross-product second derivatives is returned. This is 
+        one-way only (i.e., if f = f(x, y) then **either** d2f/dxdy or d2f/dydx
+        will be in that dictionary and NOT BOTH). 
+        
+        If only one of the inputs is ``None`` or if the cross-product 
+        derivative doesn't exist, then zero is returned.
+        
+        If x and y are the same object, then the pure second-order derivative
+        is returned.
+        
+        Optional
+        --------
+        x : AD object
+            Technically this can be any object, but to make it practically 
+            useful, ``x`` should be a single object created using the 
+            ``adnumber(...)`` constructor.
+        y : AD object
+            Same as ``x``.
+                    
+        Returns
+        -------
+        d2f/dxdy : scalar
+            The pure second derivative (if it exists), otherwise, zero.
+            
+        Examples
+        --------
+        ::
+            >>> x = adnumber(2.5)
+            >>> y = adnumber(3)
+            >>> z = x**y
+            
+            >>> z.d2c()
+            {(ad(2.5), ad(3)): 33.06704268553368}
+            
+            >>> z.d2c(x, y)  # either input order gives same result
+            33.06704268553368
+            
+            >>> z.d2c(y, y)  # pure second deriv wrt y
+            0.8395887053184748
+            
+        See Also
+        --------
+        d, d2, gradient, hessian
+        
         """
         if (x is not None) and (y is not None):
             if x is y:
@@ -508,9 +638,10 @@ class ADF(object):
                         except KeyError:
                             tmp = 0.0
                 else:
-                    return 0.0
+                    tmp = 0.0
                 
-            return tmp
+            return tmp if tmp.imag else tmp.real
+
         elif ((x is not None) and not (y is not None)) or \
              ((y is not None) and not (x is not None)):
             return 0.0
@@ -518,6 +649,41 @@ class ADF(object):
             return self._cp
     
     def gradient(self, variables):
+        """
+        Returns the gradient, or Jacobian, (array of partial derivatives) of the
+        AD object given some input variables. The order of the inputs
+        determines the order of the returned list of values::
+        
+            f.gradient([y, x, z]) --> [df/dy, df/dx, df/dz]
+        
+        Parameters
+        ----------
+        variables : array-like
+            An array of objects (they don't have to be AD objects). If a partial
+            derivative doesn't exist, then zero will be returned. If a single
+            object is input, a single derivative will be returned as a list.
+            
+        Returns
+        -------
+        grad : list
+            An list of partial derivatives
+            
+        Example
+        -------
+        ::
+            >>> x = adnumber(2)
+            >>> y = adnumber(0.5)
+            >>> z = x**y
+            >>> z.gradient([x, y])
+            [0.3535533905932738, 0.9802581434685472]
+
+            >>> z.gradient([x, 3, 0.4, y, -19])
+            [0.9802581434685472, 0.0, 0.0, 0.3535533905932738, 0.0]
+            
+        See Also
+        --------
+        hessian, d, d2, d2c
+        """
         try:
             grad = [self.d(v) for v in variables]
         except TypeError:
@@ -525,6 +691,51 @@ class ADF(object):
         return grad
         
     def hessian(self, variables):
+        """
+        Returns the hessian (2-d array of second partial derivatives) of the AD 
+        object given some input variables. The output order is determined by the
+        input order::
+        
+            f.hessian([y, x, z]) --> [[d2f/dy2, d2f/dydx, d2f/dydz],
+                                      [d2f/dxdy, d2f/dx2, d2f/dxdz],
+                                      [d2f/dzdy, d2f/dzdx, d2f/dz2]]
+        
+        Parameters
+        ----------
+        variables : array-like
+            An array of objects (they don't have to be AD objects). If a partial
+            derivative doesn't exist, the result of that item is zero as 
+            expected. If a single object is input, a single second derivative 
+            will be returned as a nested list.
+            
+        Returns
+        -------
+        hess : 2d-list
+            An nested list of second partial derivatives (pure and 
+            cross-product)
+            
+        Example
+        -------
+        ::
+            >>> x = adnumber(2)
+            >>> y = adnumber(0.5)
+            >>> z = x**y
+
+            >>> z.hessian([x, y])
+            [[-0.08838835,  1.33381153],
+             [ 1.33381153,  0.48045301]]
+
+            >>> z.hessian([y, 3, 0.4, x, -19])
+            [[ 0.48045301,  0.        ,  0.        ,  1.33381153,  0.        ],
+             [ 0.        ,  0.        ,  0.        ,  0.        ,  0.        ],
+             [ 0.        ,  0.        ,  0.        ,  0.        ,  0.        ],
+             [ 1.33381153,  0.        ,  0.        , -0.08838835,  0.        ],
+             [ 0.        ,  0.        ,  0.        ,  0.        ,  0.        ]]
+
+        See Also
+        --------
+        gradient, d, d2, d2c
+        """
         try:
             hess = []
             for v1 in variables:
@@ -541,14 +752,13 @@ class ADF(object):
         return self**0.5
         
     def _get_variables(self, ad_funcs):
-        # List of involved variables (Variable objects):
+        # List of involved variables (ADV objects):
         variables = set()
         for expr in ad_funcs:
             variables |= set(expr._lc)
         return variables
     
     def __add__(self, val):
-        
         ad_funcs = map(to_auto_diff, (self, val))
 
         x = ad_funcs[0].x
@@ -556,7 +766,7 @@ class ADF(object):
         
         ########################################
         # Nominal value of the constructed ADF:
-        f   = x + y
+        f = x + y
         
         ########################################
         variables = self._get_variables(ad_funcs)
@@ -584,7 +794,7 @@ class ADF(object):
     
     def __radd__(self, val):
         """
-        This method shouldn't need any modification if __add__ and __mul__ have
+        This method shouldn't need any modification if __add__ has
         been defined
         """
         return self+val
@@ -597,7 +807,7 @@ class ADF(object):
         
         ########################################
         # Nominal value of the constructed ADF:
-        f   = x*y
+        f = x*y
         
         ########################################
 
@@ -627,7 +837,7 @@ class ADF(object):
     
     def __rmul__(self, val):
         """
-        This method shouldn't need any modification if __add__ and __mul__ have
+        This method shouldn't need any modification if __mul__ has
         been defined
         """
         return self*val    
@@ -643,7 +853,7 @@ class ADF(object):
         
         ########################################
         # Nominal value of the constructed ADF:
-        f   = x/y
+        f = x/y
         
         ########################################
 
@@ -674,14 +884,14 @@ class ADF(object):
     
     def __rdiv__(self, val):
         """
-        This method shouldn't need any modification if __add__ and __mul__ have
+        This method shouldn't need any modification if __pow__ and __mul__ have
         been defined
         """
         return val*self**(-1)
     
     def __rtruediv__(self, val):
         """
-        This method shouldn't need any modification if __add__ and __mul__ have
+        This method shouldn't need any modification if __pow__ and __mul__ have
         been defined
         """
         return val*self**(-1)
@@ -708,7 +918,7 @@ class ADF(object):
         
         ########################################
         # Nominal value of the constructed ADF:
-        f   = x**y
+        f = x**y
         
         ########################################
 
@@ -722,14 +932,24 @@ class ADF(object):
         # Calculation of the derivatives with respect to the arguments
         # of f (ad_funcs):
 
-        if x>0 and ad_funcs[1].d(ad_funcs[1])!=0:
-            lc_wrt_args = [y*x**(y-1), x**y*math.log(x)]
-            qc_wrt_args = [y*(y-1)*x**(y-2), (math.log(x))**2]
-            cp_wrt_args = x**(y-1)*(x*math.log(x)+y)
+        if isinstance(x, complex) or isinstance(y, complex):
+            if abs(x)>0 and ad_funcs[1].d(ad_funcs[1])!=0:
+                lc_wrt_args = [y*x**(y-1), x**y*cmath.log(x)]
+                qc_wrt_args = [y*(y-1)*x**(y-2), (cmath.log(x))**2]
+                cp_wrt_args = x**(y-1)*(x*cmath.log(x)+y)
+            else:
+                lc_wrt_args = [y*x**(y-1), 0.]
+                qc_wrt_args = [y*(y-1)*x**(y-2), 0.]
+                cp_wrt_args = 0.
         else:
-            lc_wrt_args = [y*x**(y-1), 0.]
-            qc_wrt_args = [y*(y-1)*x**(y-2), 0.]
-            cp_wrt_args = 0.
+            if x>0 and ad_funcs[1].d(ad_funcs[1])!=0:
+                lc_wrt_args = [y*x**(y-1), x**y*math.log(x)]
+                qc_wrt_args = [y*(y-1)*x**(y-2), (math.log(x))**2]
+                cp_wrt_args = x**(y-1)*(x*math.log(x)+y)
+            else:
+                lc_wrt_args = [y*x**(y-1), 0.]
+                qc_wrt_args = [y*(y-1)*x**(y-2), 0.]
+                cp_wrt_args = 0.
             
 
         ########################################
@@ -794,6 +1014,7 @@ class ADF(object):
         # The function now returns an ADF object:
         return ADF(f, lc_wrt_vars, qc_wrt_vars, cp_wrt_vars)
         
+    # coercion follows the capabilities of the respective input types
     def __int__(self):
         return int(self.x)
     
@@ -806,120 +1027,145 @@ class ADF(object):
     def __complex__(self):
         return complex(self.x)
         
+    # let the respective numeric types take care of the comparison operators
     def __eq__(self, val):
-        return float.__eq__(float(self), float(val))
+        ad_funcs = map(to_auto_diff, [self, val])
+        return ad_funcs[0].x==ad_funcs[1].x
     
     def __ne__(self, val):
         return not self==val
 
     def __lt__(self, val):
-        return float.__lt__(float(self), float(val))
+        ad_funcs = map(to_auto_diff, [self, val])
+        return ad_funcs[0].x<ad_funcs[1].x
     
     def __le__(self, val):
         return (self<val) or (self==val)
     
     def __gt__(self, val):
-        return float.__gt__(float(self), float(val))
+        ad_funcs = map(to_auto_diff, [self, val])
+        return ad_funcs[0].x>ad_funcs[1].x
     
     def __ge__(self, val):
         return (self>val) or (self==val)
     
     def __nonzero__(self):
-        return float.__nonzero__(float(self))
+        return type(ad_funcs[0].x).__nonzero__(ad_funcs[0].x)
         
 class ADV(ADF):
     """
     A convenience class for distinguishing between FUNCTIONS (ADF) and VARIABLES
     """
     def __init__(self, value, tag=None):
-        # the derivative of a variable wrt itself is 1 and the second is 0
-        super(ADV, self).__init__(value, {self:1.0}, {self:0.0}, {})
-        self.tag = tag
+        # the derivative of a variable wrt itself is 1.0 and the second is 0.0
+        super(ADV, self).__init__(value, {self:1.0}, {self:0.0}, {}, tag=tag)
 
         # by generating this random trace, it should preserve relations even
-        # after pickling and un-pickling
+        # after pickling and un-pickling (not sure this is working yet...)
         self._trace = long(randint(1,100000000))
         
-def adfloat(x, tag=None):
+def adnumber(x, tag=None):
     """
-    Constructor of automatic differentiation (AD) variables
+    Constructor of automatic differentiation (AD) variables, or numbers that
+    keep track of the derivatives of subsequent calculations.
     
     Parameters
     ----------
     x : scalar or array-like
-        The nominal value(s) of the variable(s).
+        The nominal value(s) of the variable(s). Any numeric type or array is
+        supported. If ``x`` is another AD object, a fresh copy is returned that
+        contains all the derivatives of ``x``, but is not related to ``x`` in 
+        any way.
     
     Optional
     --------
     tag : str
-        A string identifier. If an array of values is input, the tag applies to
-        all the new AD objects.
+        A string identifier. If an array of values for ``x`` is input, the tag 
+        applies to all the new AD objects.
         
     Returns
     -------
-    ad : an ADV object
-        This object will contain information about its nominal value as any
-        variable normally would with additional information about its first and
-        second derivatives at the nominal value.
+    x_ad : an AD object
         
     Examples
     --------
     
-    Creating an AD object:
+    Creating an AD object (any numeric type can be input--int, float, complex,
+    etc.):
         
-        >>> from ad import adfloat
-        >>> x = adfloat(2)
+        >>> from ad import adnumber
+        >>> x = adnumber(2)
         >>> x
         ad(2.0)
-        >>> x.d(x)
+        >>> x.d(x)  # the derivative wrt itself is always 1.0
         1.0
     
+        >>> y = adnumber(0.5, 'y')  # tags are nice for tracking AD variables
+        >>> y
+        ad(0.5, y)
+
     Let's do some math:
         
-        >>> y = adfloat(0.5)
         >>> x*y
         ad(1.0)
         >>> x/y
         ad(4.0)
+        
         >>> z = x**y
         >>> z
         ad(1.41421356237)
+        
         >>> z.d(x)
         0.3535533905932738
         >>> z.d2(x)
         -0.08838834764831845
         >>> z.d2c(x, y)  # z.d2c(y, x) returns the same
         1.333811534061821
+        >>> z.d2c(y, y)  # equivalent to z.d2(y)
+        0.4804530139182014
+        
+        # only derivatives wrt original variables are tracked, thus the 
+        # derivative of z wrt itself is zero
+        >>> z.d(z)
+        0.0
         
     We can also use the exponential, logarithm, and trigonometric functions:
-        
+        variables
         >>> from ad.admath import *  # sin, exp, etc. math funcs
         >>> z = sqrt(x)*sin(erf(y)/3)
         >>> z
         ad(0.24413683610889056)
         >>> z.d()
-        {ad(0.5): 0.4080425982773223, ad(2.0): 0.06103420902722264}
+        {ad(0.5, y): 0.4080425982773223, ad(2.0): 0.06103420902722264}
         >>> z.d2()
-        {ad(0.5): -0.42899113441354375, ad(2.0): -0.01525855225680566}
+        {ad(0.5, y): -0.42899113441354375, ad(2.0): -0.01525855225680566}
         >>> z.d2c()
-        {(ad(0.5), ad(2.0)): 0.10201064956933058}
+        {(ad(0.5, y), ad(2.0)): 0.10201064956933058}
 
     We can also initialize multiple AD objects in the same constructor by
     supplying a sequence of values--the ``tag`` keyword is applied to all the
     new objects:
         
-        >>> x, y, z = adfloat([2, 0.5, 3.1415])
+        >>> x, y, z = adnumber([2, 0.5, (1+3j)], tag='group1')
+        >>> z
+        ad((1+3j), group1)
     
-    From here, almost any ``numpy`` operation can be performed (i.e., sum, 
+    If ``numpy`` is installed, the returned array can be converted to a 
+    ``numpy.ndarray`` using the ``numpy.array(...)`` constructor::
+    
+        >>> import numpy as np
+        >>> x = np.array(adnumber([2, 0.5, (1+3j)])
+        
+    From here, almost any ``numpy`` operation can be performed (i.e., sum, max,
     etc.), though I haven't performed extensive testing to know which functions
     won't work.
         
     """
     try:
-        return [adfloat(float(xi), tag) for i,xi in enumerate(x)]
+        return type(x)([adnumber(xi, tag) for xi in x])
     except TypeError:
         if isinstance(x, ADF):
-            cp = copy.copy(x)
+            cp = copy.deepcopy(x)
             return cp
         elif isinstance(x, CONSTANT_TYPES):
             return ADV(x, tag)
