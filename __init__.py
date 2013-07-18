@@ -9,6 +9,12 @@ import cmath
 import copy
 from random import randint
 
+try:
+    import numpy
+    numpy_installed = True
+except ImportError:
+    numpy_installed = False
+
 __version_info__ = (1, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -1057,12 +1063,13 @@ class ADV(ADF):
     A convenience class for distinguishing between FUNCTIONS (ADF) and VARIABLES
     """
     def __init__(self, value, tag=None):
-        # the derivative of a variable wrt itself is 1.0 and the second is 0.0
+        # The first derivative of a variable wrt itself is always 1.0 and 
+        # the second is always 0.0
         super(ADV, self).__init__(value, {self:1.0}, {self:0.0}, {}, tag=tag)
 
         # by generating this random trace, it should preserve relations even
         # after pickling and un-pickling (not sure this is working yet...)
-        self._trace = long(randint(1,100000000))
+        self._trace = randint(1,100000000)
         
 def adnumber(x, tag=None):
     """
@@ -1162,7 +1169,16 @@ def adnumber(x, tag=None):
         
     """
     try:
-        return type(x)([adnumber(xi, tag) for xi in x])
+        # If the input is a numpy array, return a numpy array, otherwise try to
+        # match the input type (numpy arrays are constructed differently using
+        # numpy.array(...) and the actual class type, numpy.ndarray(...), so we
+        # needed an exception). Other iterable types may need exceptions, but
+        # this should always work for list objects at least.
+        if numpy_installed and isinstance(x, numpy.ndarray):
+            new_adnumber = numpy.array([adnumber(xi, tag) for xi in x])
+        else:
+            new_adnumber = type(x)([adnumber(xi, tag) for xi in x]    )
+        return new_adnumber
     except TypeError:
         if isinstance(x, ADF):
             cp = copy.deepcopy(x)
