@@ -1,3 +1,19 @@
+ad-1.1
+======
+
+- Changed the core usage to be compatible with all base numeric types (int, 
+  float, long, and complex).
+
+- Changed the main constructor name from ``adfloat`` to ``adnumber`` because of
+  the full numeric support (not just for floats). The reasoning is because this
+  package should simply provide a "wrapper"-ish functionality for derivative
+  tracking (i.e., it shouldn't force the user to choose float objects if they
+  don't want to.
+  
+- Added ``real`` and ``imag`` properties to ``ADF`` class.
+
+- Updated all class/function documentation strings
+
 ad-1.0.3
 ========
 
