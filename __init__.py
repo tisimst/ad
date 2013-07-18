@@ -1177,7 +1177,7 @@ def adnumber(x, tag=None):
         if numpy_installed and isinstance(x, numpy.ndarray):
             new_adnumber = numpy.array([adnumber(xi, tag) for xi in x])
         else:
-            new_adnumber = type(x)([adnumber(xi, tag) for xi in x]    )
+            new_adnumber = type(x)([adnumber(xi, tag) for xi in x])
         return new_adnumber
     except TypeError:
         if isinstance(x, ADF):
