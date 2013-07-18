@@ -12,7 +12,22 @@ ad-1.1
   
 - Added ``real`` and ``imag`` properties to ``ADF`` class.
 
-- Updated all class/function documentation strings
+- Updated all admath functions to work with their respective numeric types using
+  the math and cmath module functions.
+
+- Updated all admath function documentation to reflect basically the same as the
+  math module.
+
+- Added ``pi`` and ``e`` module members to admath.
+
+- Added ``atan2``, ``isinf`` and ``isnan`` methods to admath.
+
+- Updated ``log10``, ``log1p``, ``expm1``, and ``fabs`` in admath to use the 
+  actual math or cmath module functions, mostly for their higher precision at 
+  certain input values (see the math/cmath module documentation for more 
+  details).
+  
+- Bug fix: ``log`` didn't default to base ``e`` before. It's fixed now.
 
 ad-1.0.3
 ========
