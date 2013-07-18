@@ -1,7 +1,7 @@
 Metadata-Version: 1.1
 Name: ad
-Version: 1.0.3
-Summary: Fast, transparent, calculations of first and second-order automatic differentiation package
+Version: 1.1
+Summary: Fast, transparent calculations of first and second-order automatic differentiation package
 Home-page: https://github.com/tisimst/ad
 Author: Abraham Lee
 Author-email: tisimst@gmail.com
@@ -17,7 +17,14 @@ Description: ``ad`` Package Documentation
         The ``ad`` package allows you to **easily** and **transparently** perform 
         **first and second-order automatic differentiation**. Advanced math 
         involving trigonometric, logarithmic, hyperbolic, etc. functions can also 
-        be evaluated directly using the ``admath`` sub-module.
+        be evaluated directly using the ``admath`` sub-module. 
+        
+        **All base numeric types are supported** (``int``, ``float``, ``complex``, 
+        etc.). This package is designed so that the underlying numeric types will 
+        interact with each other *as they normally do* when performing any 
+        calculations. Thus, this package acts more like a "wrapper" that simply helps 
+        keep track of derivatives while **maintaining the original functionality** of 
+        the numeric calculations.
         
         From the Wikipedia entry on `Automatic differentiation`_ (AD):
         
@@ -31,23 +38,23 @@ Description: ``ad`` Package Documentation
         Basic examples
         --------------
         
-        Let's start with the main import::
+        Let's start with the main import that all numbers use to track derivatives::
         
-            >>> from ad import adfloat
+            >>> from ad import adnumber
         
         Creating AD objects (either a scalar or an array is acceptable)::
         
-            >>> x = adfloat(2.0)
+            >>> x = adnumber(2.0)
             >>> x
             ad(2.0)
         
-            >>> y = adfloat([1,2,3])
+            >>> y = adnumber([1, 2, 3])
             >>> y
-            [ad(1.0), ad(2.0), ad(3.0)]
+            [ad(1), ad(2), ad(3)]
         
-            >>> z = adfloat(3, tag='z')  # tags can help track variables
+            >>> z = adnumber(3, tag='z')  # tags can help track variables
             >>> z
-            ad(3.0, z)
+            ad(3, z)
         
         Now for some math::
         
@@ -57,17 +64,18 @@ Description: ``ad`` Package Documentation
         
             >>> sum_value = sum(y)
             >>> sum_value
-            ad(6.0)
+            ad(6)
         
             >>> w = x*z**2
             >>> w
             ad(18.0)
         
-        Using more advanced math functions::
+        Using more advanced math functions like those in the standard math_ and cmath_
+        modules::
         
             >>> from ad.admath import *  # sin, cos, log, exp, sqrt, etc.
             >>> sin(1 + x**2)
-            ad(-0.958924274663)
+            ad(-0.9589242746631385)
         
         Calculating derivatives (evaluated at the given input values)::
         
@@ -87,7 +95,7 @@ Description: ``ad`` Package Documentation
             4.0
             
             >>> w.d()  # a dict of all relevant derivatives shown if no input
-            {ad(2.0): 9.0, ad(3.0, z): 12.0}
+            {ad(2.0): 9.0, ad(3, z): 12.0}
         
         Some convenience functions (useful in optimization)::
         
@@ -100,25 +108,26 @@ Description: ``ad`` Package Documentation
             >>> sum_value.gradient(y)  # works well with input arrays
             [1.0, 1.0, 1.0]
         
-        Working with NumPy_ arrays (most functions should work out-of-the-box)::
+        Working with NumPy_ arrays (many functions should work out-of-the-box)::
         
             >>> import numpy as np
-            >>> arr = np.array(adfloat([1, 2, 3]))  # multiple input support
+            >>> arr = np.array([1, 2, 3])
+            >>> a = adnumber(arr)
         
-            >>> arr.sum()
-            ad(6.0)
+            >>> a.sum()
+            ad(6)
         
-            >>> arr.max()
-            ad(3.0)
+            >>> a.max()
+            ad(3)
         
-            >>> arr.mean()
+            >>> a.mean()
             ad(2.0)
         
-            >>> arr.var()  # array variance
-            ad(0.666666666667)
+            >>> a.var()  # array variance
+            ad(0.6666666666666666)
         
-            >>> sqrt(arr)  # vectorized operations supported with ad operators
-            array([ad(1.0), ad(1.41421356237), ad(1.73205080757)], dtype=object)
+            >>> print sqrt(a)  # vectorized operations supported with ad operators
+            [ad(1.0) ad(1.4142135623730951) ad(1.7320508075688772)]
         
         Main Features
         -------------
@@ -129,13 +138,18 @@ Description: ``ad`` Package Documentation
         
         - **Almost all mathematical operations** are supported, including
           functions from the standard math_ module (sin, cos, exp, erf, 
-          etc.) with additional convenience trigonometric, hyperbolic, 
-          and logarithmic functions (csc, acoth, ln, etc.). Comparison 
-          operators follow the same rules as ``float`` types.
+          etc.) and cmath_ module (phase, polar, etc.) with additional convenience 
+          trigonometric, hyperbolic, and logarithmic functions (csc, acoth, ln, etc.).
+          Comparison operators follow the **same rules as the underlying numeric 
+          types**.
         
         - Nearly all derivative calculations are performed **analytically**
           (only the ``gamma`` and ``lgamma`` functions use a high-accuracy 
           finite difference formula).
+        
+        - **Real and complex** arithmetic handled seamlessly. Treat objects as you
+          normally would using the math_ and cmath_ functions, but with their new 
+          ``admath`` counterparts.
         
         Installation
         ------------
@@ -181,6 +195,7 @@ Description: ``ad`` Package Documentation
         
         .. _NumPy: http://numpy.scipy.org/
         .. _math: http://docs.python.org/library/math.html
+        .. _cmath: http://docs.python.org/library/cmath.html
         .. _Automatic differentiation: http://en.wikipedia.org/wiki/Automatic_differentiation
         .. _Eric O. LEBIGOT (EOL): http://www.linkedin.com/pub/eric-lebigot/22/293/277
         .. _uncertainties: http://pypi.python.org/pypi/uncertainties

@@ -6,7 +6,7 @@ with open('README.rst') as file:
 setup(name='ad',
     version='1.1',
     author='Abraham Lee',
-    description='Fast, transparent calculations of first and second-order automatic differentiation package',
+    description='Fast, transparent first- and second-order automatic differentiation',
     author_email='tisimst@gmail.com',
     url='https://github.com/tisimst/ad',
     license='BSD License',
