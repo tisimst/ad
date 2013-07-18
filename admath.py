@@ -1191,7 +1191,7 @@ def sqrt(x):
     """
     Return the square root of x.
     """
-    x**0.5
+    return x**0.5
             
 def tan(x):
     """
