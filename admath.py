@@ -48,6 +48,41 @@ import math
 import cmath  # can handle non-complex values too
 from ad import __author__,ADF,to_auto_diff,_apply_chain_rule
 
+try:
+    import numpy as np
+except ImportError:
+    numpy_installed = False
+else:
+    numpy_installed = True
+    
+    def return_numpy_array_if_given(func):
+        def wrapped_func(*args):
+            if len(args)==1:
+                ans = func(*args)
+                if isinstance(args[0], np.ndarray):
+                    ans = np.array(ans)
+            else:
+                same_arg_lengths = True
+                for arg1 in args[:-1]:
+                    for arg2 in args[1:]:
+                        if len(arg1)!=len(arg2):
+                            same_arg_lengths = False
+                            break
+                if same_arg_lengths:
+                    ans = [func(*arg) for arg in args]
+                    if any([isinstance(arg, np.ndarray) for arg in args]):
+                        ans = np.array(ans)
+                else:
+                    raise ValueError('Input arguments not the same length')
+            return ans
+        
+        wrapped_func.__name__ = func.__name__
+        wrapped_func.__doc__ = func.__doc__
+        wrapped_func.__module__ = func.__module__
+        
+        return wrapped_func
+                            
+                            
 __all__ = [
     # math/cmath module equivalent functions
     'sin', 'asin', 'sinh', 'asinh',
@@ -105,6 +140,7 @@ def _fourth_order_second_fd(func,x):
     fp2 = func(x+2*eps)
     return (-fm2+16*fm1-30*f+16*fp1-fp2)/12/eps**2
     
+#@return_numpy_array_if_given
 def acos(x):
     """
     Return the arc cosine of x, in radians.
@@ -153,6 +189,7 @@ def acos(x):
             else:
                 return math.acos(x.real)
 
+#@return_numpy_array_if_given
 def acosh(x):
     """
     Return the inverse hyperbolic cosine of x.
@@ -201,6 +238,7 @@ def acosh(x):
             else:
                 return math.acosh(x.real)
 
+#@return_numpy_array_if_given
 def asin(x):
     """
     Return the arc sine of x, in radians.
@@ -249,6 +287,7 @@ def asin(x):
             else:
                 return math.asin(x.real)
 
+#@return_numpy_array_if_given
 def asinh(x):
     """
     Return the inverse hyperbolic sine of x.
@@ -297,6 +336,7 @@ def asinh(x):
             else:
                 return math.asinh(x.real)
 
+#@return_numpy_array_if_given
 def atan(x):
     """
     Return the arc tangent of x, in radians
@@ -345,6 +385,7 @@ def atan(x):
             else:
                 return math.atan(x.real)
 
+#@return_numpy_array_if_given
 def atan2(y, x):
     """
     Return ``atan(y / x)``, in radians. The result is between ``-pi`` and 
@@ -369,6 +410,7 @@ def atan2(y, x):
         else:
             return 0.0
     
+#@return_numpy_array_if_given
 def atanh(x):
     """
     Return the inverse hyperbolic tangent of x.
@@ -417,6 +459,7 @@ def atanh(x):
             else:
                 return math.atanh(x.real)
 
+#@return_numpy_array_if_given
 def isinf(x):
     """
     Return True if the real or the imaginary part of x is positive or negative 
@@ -430,6 +473,7 @@ def isinf(x):
         else:
             return math.isinf(x.real)
         
+#@return_numpy_array_if_given
 def isnan(x):
     """
     Return True if the real or imaginary part of x is not a number (NaN).
@@ -442,24 +486,28 @@ def isnan(x):
         else:
             return math.isnan(x.real)
  
+#@return_numpy_array_if_given
 def phase(x):
     """
     Return the phase of x (also known as the argument of x).
     """
     return atan2(x.imag, x.real)
 
+#@return_numpy_array_if_given
 def polar(x):
     """
     Return the representation of x in polar coordinates.
     """
     return (abs(x), phase(x))
 
+#@return_numpy_array_if_given
 def rect(r, phi):
     """
     Return the complex number x with polar coordinates r and phi.
     """
     return r * (cos(phi) + sin(phi)*1j)
 
+#@return_numpy_array_if_given
 def ceil(x):
     """
     Return the ceiling of x as a float, the smallest integer value greater than 
@@ -506,6 +554,7 @@ def ceil(x):
         except TypeError:
             return math.ceil(x)
 
+#@return_numpy_array_if_given
 def cos(x):
     """
     Return the cosine of x radians.
@@ -554,6 +603,7 @@ def cos(x):
             else:
                 return math.cos(x.real)
 
+#@return_numpy_array_if_given
 def cosh(x):
     """
     Return the hyperbolic cosine of x.
@@ -602,12 +652,14 @@ def cosh(x):
             else:
                 return math.cosh(x.real)
 
+#@return_numpy_array_if_given
 def degrees(x):
     """
     Converts angle x from radians to degrees.
     """
     return (180/pi)*x
 
+#@return_numpy_array_if_given
 def erf(x):
     """
     Return the error function at x.
@@ -653,12 +705,14 @@ def erf(x):
         except TypeError:
             return math.erf(x)
 
+#@return_numpy_array_if_given
 def erfc(x):
     """
     Return the complementary error function at x.
     """
     return 1 - erf(x)
     
+#@return_numpy_array_if_given
 def exp(x):
     """
     Return the exponential value of x
@@ -707,6 +761,7 @@ def exp(x):
             else:
                 return math.exp(x.real)
 
+#@return_numpy_array_if_given
 def expm1(x):
     """
     Return e**x - 1. For small floats x, the subtraction in exp(x) - 1 can 
@@ -760,6 +815,7 @@ def expm1(x):
         except TypeError:
             return math.expm1(x) 
     
+#@return_numpy_array_if_given
 def fabs(x):
     """
     Return the absolute value of x.
@@ -811,6 +867,7 @@ def fabs(x):
         except TypeError:
             return math.fabs(x) 
 
+#@return_numpy_array_if_given
 def factorial(x):
     """
     Return x factorial. Uses the relationship factorial(x)==gamma(x+1) to 
@@ -818,6 +875,7 @@ def factorial(x):
     """
     return gamma(x+1)
 
+#@return_numpy_array_if_given
 def floor(x):
     """
     Return the floor of x as a float, the largest integer value less than or 
@@ -864,6 +922,7 @@ def floor(x):
         except TypeError:
             return math.floor(x)
 
+#@return_numpy_array_if_given
 def gamma(x):
     """
     Return the Gamma function at x.
@@ -911,6 +970,7 @@ def gamma(x):
         except TypeError:
             return math.gamma(x)
 
+#@return_numpy_array_if_given
 def hypot(x,y):
     """
     Return the Euclidean norm, ``sqrt(x*x + y*y)``. This is the length of the 
@@ -918,20 +978,22 @@ def hypot(x,y):
     """
     return sqrt(x*x+y*y)
     
+#@return_numpy_array_if_given
 def lgamma(x,y):
     """
     Return the natural logarithm of the absolute value of the Gamma function at x.
     """
     return log(abs(gamma(x)))
     
-def log(x, base=None):
+#@return_numpy_array_if_given
+def log(x, base=e):
     """
     With one argument, return the natural logarithm of x (to base e).
 
     With two arguments, return the logarithm of x to the given base, calculated 
     as ``log(x)/log(base)``.
     """
-    if base is not None:
+    if base!=e:
         return log(x)/log(base)
     
     if isinstance(x,ADF):
@@ -942,7 +1004,7 @@ def log(x, base=None):
         
         ########################################
         # Nominal value of the constructed ADF:
-        f = log(x)
+        f = log(x, base)
         
         ########################################
 
@@ -956,7 +1018,7 @@ def log(x, base=None):
         # Calculation of the derivatives with respect to the arguments
         # of f (ad_funcs):
 
-        lc_wrt_args = [1/x]
+        lc_wrt_args = [1./x]
         qc_wrt_args = [-1./x**2]
         cp_wrt_args = 0.0
 
@@ -980,6 +1042,7 @@ def log(x, base=None):
             else:
                 return math.log(x.real, base)
 
+#@return_numpy_array_if_given
 def log10(x):
     """
     Return the base-10 logarithm of x. This is usually more accurate than 
@@ -1031,6 +1094,7 @@ def log10(x):
             else:
                 return math.log10(x.real)
 
+#@return_numpy_array_if_given
 def log1p(x):
     """
     Return the base-10 logarithm of x. This is usually more accurate than 
@@ -1079,18 +1143,21 @@ def log1p(x):
         except TypeError:
             return math.log1p(x)
 
+#@return_numpy_array_if_given
 def pow(x, y):
     """
     Return x raised to the power y. 
     """
     return x**y
 
+#@return_numpy_array_if_given
 def radians(x):
     """
     Converts angle x from degrees to radians.
     """
     return (pi/180)*x
     
+#@return_numpy_array_if_given
 def sin(x):
     """
     Return the sine of x radians.
@@ -1139,6 +1206,7 @@ def sin(x):
             else:
                 return math.sin(x.real)
 
+#@return_numpy_array_if_given
 def sinh(x):
     """
     Return the hyperbolic sine of x.
@@ -1187,12 +1255,14 @@ def sinh(x):
             else:
                 return math.sinh(x.real)
 
+#@return_numpy_array_if_given
 def sqrt(x):
     """
     Return the square root of x.
     """
     return x**0.5
             
+#@return_numpy_array_if_given
 def tan(x):
     """
     Return the tangent of x radians.
@@ -1241,6 +1311,7 @@ def tan(x):
             else:
                 return math.tan(x.real)
 
+#@return_numpy_array_if_given
 def tanh(x):
     """
     Return the hyperbolic tangent of x.
@@ -1289,6 +1360,7 @@ def tanh(x):
             else:
                 return math.tanh(x.real)
 
+#@return_numpy_array_if_given
 def trunc(x):
     """
     Return the **Real** value x truncated to an **Integral** (usually a 
