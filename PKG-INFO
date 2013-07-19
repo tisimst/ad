@@ -1,7 +1,7 @@
 Metadata-Version: 1.1
 Name: ad
 Version: 1.1
-Summary: Fast, transparent calculations of first and second-order automatic differentiation package
+Summary: Fast, transparent first- and second-order automatic differentiation
 Home-page: https://github.com/tisimst/ad
 Author: Abraham Lee
 Author-email: tisimst@gmail.com
