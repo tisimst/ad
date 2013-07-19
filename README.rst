@@ -121,6 +121,33 @@ Working with NumPy_ arrays (many functions should work out-of-the-box)::
     >>> print sqrt(a)  # vectorized operations supported with ad operators
     [ad(1.0) ad(1.4142135623730951) ad(1.7320508075688772)]
 
+Using with ``scipy.optimize``
+-----------------------------
+
+To make it easier to work with the ``scipy.optimize`` module, there's a 
+**convenient way to wrap functions** that will generate appropriate gradient
+and hessian functions::
+
+    >>> from ad import gh  # the gradient and hessian function generator
+    
+    >>> def objective(x):
+    ...     return (x[0] - 10.0)**2 + (x[1] + 5.0)**2
+    
+    >>> grad, hess = gh(objective)  # now gradient and hessian are automatic!
+    
+    >>> from scipy.optimize import minimize
+    >>> x0 = np.array([24, 17])
+    >>> bnds = ((0, None), (0, None))
+    >>> method = 'L-BFGS-B'
+    >>> res = minimize(objective, x0, method=method, jac=grad, bounds=bnds,
+    ...                options={'ftol': 1e-8, 'disp': False})
+    >>> res.x  # optimal parameter values
+    array([ 10.,   0.])
+    >>> res.fun  # optimal objective
+    25.0
+    >>> res.jac  # gradient at optimum
+    array([  7.10542736e-15,   1.00000000e+01])
+    
 Main Features
 -------------
 
@@ -142,6 +169,9 @@ Main Features
 - **Real and complex** arithmetic handled seamlessly. Treat objects as you
   normally would using the math_ and cmath_ functions, but with their new 
   ``admath`` counterparts.
+  
+- **Automatic gradient and hessian function generator** for optimization 
+  studies with ``gh(your_func_here)``.
 
 Installation
 ------------
