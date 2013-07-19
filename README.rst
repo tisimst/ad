@@ -121,10 +121,10 @@ Working with NumPy_ arrays (many functions should work out-of-the-box)::
     >>> print sqrt(a)  # vectorized operations supported with ad operators
     [ad(1.0) ad(1.4142135623730951) ad(1.7320508075688772)]
 
-Using with ``scipy.optimize``
------------------------------
+Interfacing with `scipy.optimize`_
+----------------------------------
 
-To make it easier to work with the ``scipy.optimize`` module, there's a 
+To make it easier to work with the `scipy.optimize`_ module, there's a 
 **convenient way to wrap functions** that will generate appropriate gradient
 and hessian functions::
 
@@ -171,7 +171,7 @@ Main Features
   ``admath`` counterparts.
   
 - **Automatic gradient and hessian function generator** for optimization 
-  studies with ``gh(your_func_here)``.
+  studies using `scipy.optimize`_ routines with ``gh(your_func_here)``.
 
 Installation
 ------------
@@ -212,7 +212,7 @@ Please send **feature requests, bug reports, or feedback** to
 Acknowledgements
 ----------------
 
-The author expresses his thanks to `Eric O. LEBIGOT (EOL)`_, author of the uncertainties_ package, for providing code insight and inspiration.
+The author expresses his thanks to `Eric O. LEBIGOT (EOL)`_, author of the uncertainties_ package, for providing code insight and inspiration; and to Stephen Marks, professor at Pomona College, for useful feedback concerning the interface with optimization routines in ``scipy.optimize``.
 
 
 .. _NumPy: http://numpy.scipy.org/
@@ -221,5 +221,6 @@ The author expresses his thanks to `Eric O. LEBIGOT (EOL)`_, author of the uncer
 .. _Automatic differentiation: http://en.wikipedia.org/wiki/Automatic_differentiation
 .. _Eric O. LEBIGOT (EOL): http://www.linkedin.com/pub/eric-lebigot/22/293/277
 .. _uncertainties: http://pypi.python.org/pypi/uncertainties
+.. _scipy.optimize: http://docs.scipy.org/doc/scipy/reference/optimize.html
 .. _Abraham Lee: mailto:tisimst@gmail.com
 
