@@ -4,7 +4,7 @@ with open('README.rst') as file:
     long_description = file.read()
 
 setup(name='ad',
-    version='1.1',
+    version='1.1.1',
     author='Abraham Lee',
     description='Fast, transparent first- and second-order automatic differentiation',
     author_email='tisimst@gmail.com',

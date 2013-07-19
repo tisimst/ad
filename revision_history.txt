@@ -1,3 +1,10 @@
+ad-1.1.1
+========
+
+- Added ``gh`` utility function for generating gradient and hessian functions
+  of mathematical functions. The intent is to make it easy for users wanting to
+  use the ``ad`` package with``scipy.optimize`` functions.
+
 ad-1.1
 ======
 
