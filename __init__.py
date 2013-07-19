@@ -1190,3 +1190,92 @@ def adnumber(x, tag=None):
         'Automatic differentiation not yet supported for {:} objects'.format(
         type(x))
         )
+
+adfloat = adnumber  # for backwards compatibility
+
+def gh(func):
+    """
+    Generates gradient (g) and hessian (h) functions of the input function 
+    using automatic differentiation. This is primarily for use in conjunction
+    with the scipy.optimize package, though certainly not restricted there.
+    
+    NOTE: If NumPy is installed, the returned object from ``grad`` and ``hess`` 
+    will be a NumPy array. Otherwise, a generic list (or nested list, for 
+    ``hess``) will be returned.
+    
+    Parameters
+    ----------
+    func : function
+        This function should be composed of pure python mathematics (i.e., it
+        shouldn't be used for calling an external executable since AD doesn't 
+        work for that).
+    
+    Returns
+    -------
+    grad : function
+        The AD-compatible gradient function of ``func``
+    hess : function
+        The AD-compatible hessian function of ``func``
+        
+    Examples
+    --------
+    ::
+    
+        >>> def my_cool_function(x):
+        ...     return (x[0]-10.0)**2 + (x[1]+5.0)**2
+        ...
+        >>> grad, hess = gh(my_cool_function)
+        >>> x = [24, 17]
+        >>> grad(x)
+        [28.0, 44.0]
+        >>> hess(x)
+        [[2.0, 0.0], [0.0, 2.0]]
+        
+        >>> import numpy as np
+        >>> x_arr = np.array(x)
+        >>> grad(x_arr)
+        array([ 28.,  44.])
+        >>> hess(x_arr)
+        array([[ 2.,  0.],
+               [ 0.,  2.]])
+ 
+    """
+    def grad(x):
+        xa = adnumber(x)
+        if numpy_installed and isinstance(x, numpy.ndarray):
+            ans = func(xa)
+            if isinstance(ans, numpy.ndarray):
+                return numpy.array(ans[0].gradient(list(xa)))
+            else:
+                return numpy.array(ans.gradient(list(xa)))
+        else:
+            try:
+                # first see if the input is an array-like object (list or tuple)
+                return func(xa).gradient(xa)
+            except TypeError:
+                # if it's a scalar, then update to a list for the gradient call
+                return func(xa).gradient([xa])
+    
+    def hess(x):
+        xa = adnumber(x)
+        if numpy_installed and isinstance(x, numpy.ndarray):
+            ans = func(xa)
+            if isinstance(ans, numpy.ndarray):
+                return numpy.array(ans[0].hessian(list(xa)))
+            else:
+                return numpy.array(ans.hessian(list(xa)))
+        else:
+            try:
+                # first see if the input is an array-like object (list or tuple)
+                return func(xa).hessian(xa)
+            except TypeError:
+                # if it's a scalar, then update to a list for the hessian call
+                return func(xa).hessian([xa])
+
+    # customize the documentation with the input function name
+    for f, name in zip([grad, hess], ['gradient', 'hessian']):
+        f.__doc__ =  'The %s of %s, '%(name, func.__name__)
+        f.__doc__ += 'calculated using automatic\ndifferentiation.'
+
+    return grad, hess
+        
