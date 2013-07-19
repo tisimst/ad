@@ -15,7 +15,7 @@ try:
 except ImportError:
     numpy_installed = False
 
-__version_info__ = (1, 1)
+__version_info__ = (1, 1, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 __author__ = 'Abraham Lee'
@@ -1240,10 +1240,10 @@ def gh(func):
                [ 0.,  2.]])
  
     """
-    def grad(x):
+    def grad(x, *args):
         xa = adnumber(x)
         if numpy_installed and isinstance(x, numpy.ndarray):
-            ans = func(xa)
+            ans = func(xa, *args)
             if isinstance(ans, numpy.ndarray):
                 return numpy.array(ans[0].gradient(list(xa)))
             else:
@@ -1251,15 +1251,15 @@ def gh(func):
         else:
             try:
                 # first see if the input is an array-like object (list or tuple)
-                return func(xa).gradient(xa)
+                return func(xa, *args).gradient(xa)
             except TypeError:
                 # if it's a scalar, then update to a list for the gradient call
-                return func(xa).gradient([xa])
+                return func(xa, *args).gradient([xa])
     
-    def hess(x):
+    def hess(x, *args):
         xa = adnumber(x)
         if numpy_installed and isinstance(x, numpy.ndarray):
-            ans = func(xa)
+            ans = func(xa, *args)
             if isinstance(ans, numpy.ndarray):
                 return numpy.array(ans[0].hessian(list(xa)))
             else:
@@ -1267,15 +1267,16 @@ def gh(func):
         else:
             try:
                 # first see if the input is an array-like object (list or tuple)
-                return func(xa).hessian(xa)
+                return func(xa, *args).hessian(xa)
             except TypeError:
                 # if it's a scalar, then update to a list for the hessian call
-                return func(xa).hessian([xa])
+                return func(xa, *args).hessian([xa])
 
     # customize the documentation with the input function name
     for f, name in zip([grad, hess], ['gradient', 'hessian']):
         f.__doc__ =  'The %s of %s, '%(name, func.__name__)
-        f.__doc__ += 'calculated using automatic\ndifferentiation.'
+        f.__doc__ += 'calculated using automatic\ndifferentiation.\n\n'
+        f.__doc__ += 'Original documentation:\n'+func.__doc__
 
     return grad, hess
         
