@@ -19,7 +19,7 @@ Examples:
   x = ad.adnumber(3)
   print sin(x)  # prints ad(0.1411200080598672)
 
-  # The umath functions also work on regular Python floats:
+  # The admath functions also work on regular Python numeric types:
   print sin(3)  # prints 0.1411200080598672.  This is a normal Python float.
 
 Importing all the functions from this module into the global namespace

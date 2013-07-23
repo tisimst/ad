@@ -20,7 +20,7 @@ __version__ = '.'.join(map(str, __version_info__))
 
 __author__ = 'Abraham Lee'
 
-__all__ = ['adnumber']
+__all__ = ['adnumber', 'gh']
 
 CONSTANT_TYPES = (float, int, long, complex)
 
@@ -1163,7 +1163,7 @@ def adnumber(x, tag=None):
         >>> import numpy as np
         >>> x = np.array(adnumber([2, 0.5, (1+3j)])
         
-    From here, almost any ``numpy`` operation can be performed (i.e., sum, max,
+    From here, many ``numpy`` operations can be performed (i.e., sum, max,
     etc.), though I haven't performed extensive testing to know which functions
     won't work.
         
@@ -1173,12 +1173,15 @@ def adnumber(x, tag=None):
         # match the input type (numpy arrays are constructed differently using
         # numpy.array(...) and the actual class type, numpy.ndarray(...), so we
         # needed an exception). Other iterable types may need exceptions, but
-        # this should always work for list objects at least.
+        # this should always work for list and tuple objects at least.
+        
         if numpy_installed and isinstance(x, numpy.ndarray):
-            new_adnumber = numpy.array([adnumber(xi, tag) for xi in x])
+            return numpy.array([adnumber(xi, tag) for xi in x])
+        elif isinstance(x, (tuple, list)):
+            return type(x)([adnumber(xi, tag) for xi in x])
         else:
-            new_adnumber = type(x)([adnumber(xi, tag) for xi in x])
-        return new_adnumber
+            raise TypeError
+        
     except TypeError:
         if isinstance(x, ADF):
             cp = copy.deepcopy(x)
@@ -1276,7 +1279,8 @@ def gh(func):
     for f, name in zip([grad, hess], ['gradient', 'hessian']):
         f.__doc__ =  'The %s of %s, '%(name, func.__name__)
         f.__doc__ += 'calculated using automatic\ndifferentiation.\n\n'
-        f.__doc__ += 'Original documentation:\n'+func.__doc__
+        if func.__doc__ is not None and isinstance(func.__doc__, str):
+            f.__doc__ += 'Original documentation:\n'+func.__doc__
 
     return grad, hess
         
