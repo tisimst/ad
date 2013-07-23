@@ -27,6 +27,8 @@ From the Wikipedia entry on `Automatic differentiation`_ (AD):
     repeatedly to these operations, derivatives of arbitrary order can be 
     computed automatically, and accurate to working precision."
 
+See the `package documentation`_ for more details and examples.
+
 Basic examples
 --------------
 
@@ -212,7 +214,12 @@ Please send **feature requests, bug reports, or feedback** to
 Acknowledgements
 ----------------
 
-The author expresses his thanks to `Eric O. LEBIGOT (EOL)`_, author of the uncertainties_ package, for providing code insight and inspiration; and to Stephen Marks, professor at Pomona College, for useful feedback concerning the interface with optimization routines in ``scipy.optimize``.
+The author expresses his thanks to :
+
+- `Eric O. LEBIGOT (EOL)`_, author of the uncertainties_ package, for providing 
+  code insight and inspiration
+- Stephen Marks, professor at Pomona College, for useful feedback concerning 
+  the interface with optimization routines in ``scipy.optimize``.
 
 
 .. _NumPy: http://numpy.scipy.org/
@@ -223,4 +230,5 @@ The author expresses his thanks to `Eric O. LEBIGOT (EOL)`_, author of the uncer
 .. _uncertainties: http://pypi.python.org/pypi/uncertainties
 .. _scipy.optimize: http://docs.scipy.org/doc/scipy/reference/optimize.html
 .. _Abraham Lee: mailto:tisimst@gmail.com
+.. _package documentation: http://pythonhosted.org/ad
 
