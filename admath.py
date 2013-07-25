@@ -46,7 +46,7 @@ author.
 from __future__ import division
 import math
 import cmath  # can handle non-complex values too
-from ad import __author__,ADF,to_auto_diff,_apply_chain_rule
+from ad import __author__, ADF, to_auto_diff, _apply_chain_rule
 
 try:
     import numpy as np
@@ -77,8 +77,9 @@ else:
             return ans
         
         wrapped_func.__name__ = func.__name__
-        wrapped_func.__doc__ = func.__doc__
         wrapped_func.__module__ = func.__module__
+        if func.__doc__ is not None and isinstance(func.__doc__, str):
+            wrapped_func.__doc__ = func.__doc__
         
         return wrapped_func
                             
@@ -88,7 +89,9 @@ __all__ = [
     'sin', 'asin', 'sinh', 'asinh',
     'cos', 'acos', 'cosh', 'acosh',
     'tan', 'atan', 'atan2', 'tanh', 'atanh',
-    'e', 'isinf', 'isnan', 'phase', 'pi', 'polar', 'rect',
+    'e', 'pi', 
+    'isinf', 'isnan', 
+    'phase', 'polar', 'rect',
     'exp', 'expm1',
     'erf', 'erfc',
     'factorial', 'gamma', 'lgamma',
@@ -140,7 +143,53 @@ def _fourth_order_second_fd(func,x):
     fp2 = func(x+2*eps)
     return (-fm2+16*fm1-30*f+16*fp1-fp2)/12/eps**2
     
-#@return_numpy_array_if_given
+def _vectorize(func):
+    """
+    Make a function that accepts 1 or 2 arguments work with input arrays (of
+    length m) in the following array length combinations:
+    
+    - m x m
+    - 1 x m
+    - m x 1
+    - 1 x 1
+    """
+    def vectorized_function(*args):
+        if len(args)==1:
+            x = args[0]
+            try:
+                return [vectorized_function(xi) for xi in x]
+            except TypeError:
+                return func(x)
+                
+        elif len(args)==2:
+            x, y = args
+            try:
+                return [vectorized_function(xi, yi) for xi, yi in zip(x, y)]
+            except TypeError:
+                try:
+                    return [vectorized_function(xi, y) for xi in x]
+                except TypeError:
+                    try:
+                        return [vectorized_function(x, yi) for yi in y]
+                    except TypeError:
+                        return func(x, y)
+    
+    n = func.__name__
+    m = func.__module__
+    d = func.__doc__
+    a = func.func_code.co_varnames
+    
+    vectorized_function.__name__ = n
+    vectorized_function.__module__ = m
+    vectorized_function.func_code.co_varnames = a
+    if d is not None:
+        vectorized_function.__doc__ = d
+    else:
+        vectorized_function.__doc__ = 'Vectorized "%s" function'%(n)
+            
+    return vectorized_function
+            
+@_vectorize
 def acos(x):
     """
     Return the arc cosine of x, in radians.
@@ -174,6 +223,7 @@ def acos(x):
         # Calculation of the derivative of f with respect to all the
         # variables (Variable) involved.
 
+
         lc_wrt_vars,qc_wrt_vars,cp_wrt_vars = _apply_chain_rule(
                                     ad_funcs,variables,lc_wrt_args,qc_wrt_args,
                                     cp_wrt_args)
@@ -181,15 +231,15 @@ def acos(x):
         # The function now returns an ADF object:
         return ADF(f, lc_wrt_vars, qc_wrt_vars, cp_wrt_vars)
     else:
-        try: # pythonic: fails gracefully when x is not an array-like object
-            return [acos(xi) for xi in x]
-        except TypeError:
-            if x.imag:
-                return cmath.acos(x)
-            else:
-                return math.acos(x.real)
+#        try: # pythonic: fails gracefully when x is not an array-like object
+#            return [acos(xi) for xi in x]
+#        except TypeError:
+        if x.imag:
+            return cmath.acos(x)
+        else:
+            return math.acos(x.real)
 
-#@return_numpy_array_if_given
+@_vectorize
 def acosh(x):
     """
     Return the inverse hyperbolic cosine of x.
@@ -230,15 +280,15 @@ def acosh(x):
         # The function now returns an ADF object:
         return ADF(f, lc_wrt_vars, qc_wrt_vars, cp_wrt_vars)
     else:
-        try: # pythonic: fails gracefully when x is not an array-like object
-            return [acosh(xi) for xi in x]
-        except TypeError:
-            if x.imag:
-                return cmath.acosh(x)
-            else:
-                return math.acosh(x.real)
+#        try: # pythonic: fails gracefully when x is not an array-like object
+#            return [acosh(xi) for xi in x]
+#        except TypeError:
+        if x.imag:
+            return cmath.acosh(x)
+        else:
+            return math.acosh(x.real)
 
-#@return_numpy_array_if_given
+@_vectorize
 def asin(x):
     """
     Return the arc sine of x, in radians.
@@ -279,15 +329,15 @@ def asin(x):
         # The function now returns an ADF object:
         return ADF(f, lc_wrt_vars, qc_wrt_vars, cp_wrt_vars)
     else:
-        try: # pythonic: fails gracefully when x is not an array-like object
-            return [asin(xi) for xi in x]
-        except TypeError:
-            if x.imag:
-                return cmath.asin(x)
-            else:
-                return math.asin(x.real)
+#        try: # pythonic: fails gracefully when x is not an array-like object
+#            return [asin(xi) for xi in x]
+#        except TypeError:
+        if x.imag:
+            return cmath.asin(x)
+        else:
+            return math.asin(x.real)
 
-#@return_numpy_array_if_given
+@_vectorize
 def asinh(x):
     """
     Return the inverse hyperbolic sine of x.
@@ -328,15 +378,15 @@ def asinh(x):
         # The function now returns an ADF object:
         return ADF(f, lc_wrt_vars, qc_wrt_vars, cp_wrt_vars)
     else:
-        try: # pythonic: fails gracefully when x is not an array-like object
-            return [asinh(xi) for xi in x]
-        except TypeError:
-            if x.imag:
-                return cmath.asinh(x)
-            else:
-                return math.asinh(x.real)
+#        try: # pythonic: fails gracefully when x is not an array-like object
+#            return [asinh(xi) for xi in x]
+#        except TypeError:
+        if x.imag:
+            return cmath.asinh(x)
+        else:
+            return math.asinh(x.real)
 
-#@return_numpy_array_if_given
+@_vectorize
 def atan(x):
     """
     Return the arc tangent of x, in radians
@@ -377,15 +427,15 @@ def atan(x):
         # The function now returns an ADF object:
         return ADF(f, lc_wrt_vars, qc_wrt_vars, cp_wrt_vars)
     else:
-        try: # pythonic: fails gracefully when x is not an array-like object
-            return [atan(xi) for xi in x]
-        except TypeError:
-            if x.imag:
-                return cmath.atan(x)
-            else:
-                return math.atan(x.real)
+#        try: # pythonic: fails gracefully when x is not an array-like object
+#            return [atan(xi) for xi in x]
+#        except TypeError:
+        if x.imag:
+            return cmath.atan(x)
+        else:
+            return math.atan(x.real)
 
-#@return_numpy_array_if_given
+@_vectorize
 def atan2(y, x):
     """
     Return ``atan(y / x)``, in radians. The result is between ``-pi`` and 
@@ -410,7 +460,7 @@ def atan2(y, x):
         else:
             return 0.0
     
-#@return_numpy_array_if_given
+@_vectorize
 def atanh(x):
     """
     Return the inverse hyperbolic tangent of x.
@@ -451,20 +501,23 @@ def atanh(x):
         # The function now returns an ADF object:
         return ADF(f, lc_wrt_vars, qc_wrt_vars, cp_wrt_vars)
     else:
-        try: # pythonic: fails gracefully when x is not an array-like object
-            return [atanh(xi) for xi in x]
-        except TypeError:
-            if x.imag:
-                return cmath.atanh(x)
-            else:
-                return math.atanh(x.real)
+#        try: # pythonic: fails gracefully when x is not an array-like object
+#            return [atanh(xi) for xi in x]
+#        except TypeError:
+        if x.imag:
+            return cmath.atanh(x)
+        else:
+            return math.atanh(x.real)
 
-#@return_numpy_array_if_given
+@_vectorize
 def isinf(x):
     """
     Return True if the real or the imaginary part of x is positive or negative 
     infinity.
     """
+#    try:
+#        return [isinf(xi) for xi in x]
+#    except TypeError:
     if isinstance(x, ADF):
         return isinf(x.x)
     else:
@@ -473,11 +526,14 @@ def isinf(x):
         else:
             return math.isinf(x.real)
         
-#@return_numpy_array_if_given
+@_vectorize
 def isnan(x):
     """
     Return True if the real or imaginary part of x is not a number (NaN).
     """
+#    try:
+#        return [isnan(xi) for xi in x]
+#    except TypeError:
     if isinstance(x, ADF):
         return isnan(x.x)
     else:
@@ -486,28 +542,40 @@ def isnan(x):
         else:
             return math.isnan(x.real)
  
-#@return_numpy_array_if_given
+@_vectorize
 def phase(x):
     """
     Return the phase of x (also known as the argument of x).
     """
+#    try:
+#        return [atan2(xi.imag, xi.real) for xi in x]
+#    except TypeError:
     return atan2(x.imag, x.real)
 
-#@return_numpy_array_if_given
+@_vectorize
 def polar(x):
     """
     Return the representation of x in polar coordinates.
     """
     return (abs(x), phase(x))
 
-#@return_numpy_array_if_given
+@_vectorize
 def rect(r, phi):
     """
     Return the complex number x with polar coordinates r and phi.
     """
-    return r * (cos(phi) + sin(phi)*1j)
+#    try:
+#        return [ri*(cos(phi_i) + sin(phi_i)*1j) for ri, phi_i in zip(r, phi)]
+#    except TypeError:
+#        try:
+#            return [ri*(cos(phi) + sin(phi)*1j) for ri in r]
+#        except TypeError:
+#            try:
+#                return [r*(cos(phi_i) + sin(phi_i)*1j) for phi_i in phi]
+#            except TypeError:
+    return r*(cos(phi) + sin(phi)*1j)
 
-#@return_numpy_array_if_given
+@_vectorize
 def ceil(x):
     """
     Return the ceiling of x as a float, the smallest integer value greater than 
@@ -549,12 +617,12 @@ def ceil(x):
         # The function now returns an ADF object:
         return ADF(f, lc_wrt_vars, qc_wrt_vars, cp_wrt_vars)
     else:
-        try: # pythonic: fails gracefully when x is not an array-like object
-            return [ceil(xi) for xi in x]
-        except TypeError:
-            return math.ceil(x)
+#        try: # pythonic: fails gracefully when x is not an array-like object
+#            return [ceil(xi) for xi in x]
+#        except TypeError:
+        return math.ceil(x)
 
-#@return_numpy_array_if_given
+@_vectorize
 def cos(x):
     """
     Return the cosine of x radians.
@@ -595,15 +663,15 @@ def cos(x):
         # The function now returns an ADF object:
         return ADF(f, lc_wrt_vars, qc_wrt_vars, cp_wrt_vars)
     else:
-        try: # pythonic: fails gracefully when x is not an array-like object
-            return [cos(xi) for xi in x]
-        except TypeError:
-            if x.imag:
-                return cmath.cos(x)
-            else:
-                return math.cos(x.real)
+#        try: # pythonic: fails gracefully when x is not an array-like object
+#            return [cos(xi) for xi in x]
+#        except TypeError:
+        if x.imag:
+            return cmath.cos(x)
+        else:
+            return math.cos(x.real)
 
-#@return_numpy_array_if_given
+@_vectorize
 def cosh(x):
     """
     Return the hyperbolic cosine of x.
@@ -644,22 +712,22 @@ def cosh(x):
         # The function now returns an ADF object:
         return ADF(f, lc_wrt_vars, qc_wrt_vars, cp_wrt_vars)
     else:
-        try: # pythonic: fails gracefully when x is not an array-like object
-            return [cosh(xi) for xi in x]
-        except TypeError:
-            if x.imag:
-                return cmath.cosh(x)
-            else:
-                return math.cosh(x.real)
+#        try: # pythonic: fails gracefully when x is not an array-like object
+#            return [cosh(xi) for xi in x]
+#        except TypeError:
+        if x.imag:
+            return cmath.cosh(x)
+        else:
+            return math.cosh(x.real)
 
-#@return_numpy_array_if_given
+@_vectorize
 def degrees(x):
     """
     Converts angle x from radians to degrees.
     """
     return (180/pi)*x
 
-#@return_numpy_array_if_given
+@_vectorize
 def erf(x):
     """
     Return the error function at x.
@@ -700,19 +768,19 @@ def erf(x):
         # The function now returns an ADF object:
         return ADF(f, lc_wrt_vars, qc_wrt_vars, cp_wrt_vars)
     else:
-        try: # pythonic: fails gracefully when x is not an array-like object
-            return [erf(xi) for xi in x]
-        except TypeError:
-            return math.erf(x)
+#        try: # pythonic: fails gracefully when x is not an array-like object
+#            return [erf(xi) for xi in x]
+#        except TypeError:
+        return math.erf(x)
 
-#@return_numpy_array_if_given
+@_vectorize
 def erfc(x):
     """
     Return the complementary error function at x.
     """
     return 1 - erf(x)
     
-#@return_numpy_array_if_given
+@_vectorize
 def exp(x):
     """
     Return the exponential value of x
@@ -753,15 +821,15 @@ def exp(x):
         # The function now returns an ADF object:
         return ADF(f, lc_wrt_vars, qc_wrt_vars, cp_wrt_vars)
     else:
-        try: # pythonic: fails gracefully when x is not an array-like object
-            return [exp(xi) for xi in x]
-        except TypeError:
-            if x.imag:
-                return cmath.exp(x)
-            else:
-                return math.exp(x.real)
+#        try: # pythonic: fails gracefully when x is not an array-like object
+#            return [exp(xi) for xi in x]
+#        except TypeError:
+        if x.imag:
+            return cmath.exp(x)
+        else:
+            return math.exp(x.real)
 
-#@return_numpy_array_if_given
+@_vectorize
 def expm1(x):
     """
     Return e**x - 1. For small floats x, the subtraction in exp(x) - 1 can 
@@ -810,12 +878,12 @@ def expm1(x):
         # The function now returns an ADF object:
         return ADF(f, lc_wrt_vars, qc_wrt_vars, cp_wrt_vars)
     else:
-        try: # pythonic: fails gracefully when x is not an array-like object
-            return [expm1(xi) for xi in x]
-        except TypeError:
-            return math.expm1(x) 
+#        try: # pythonic: fails gracefully when x is not an array-like object
+#            return [expm1(xi) for xi in x]
+#        except TypeError:
+        return math.expm1(x) 
     
-#@return_numpy_array_if_given
+@_vectorize
 def fabs(x):
     """
     Return the absolute value of x.
@@ -843,8 +911,8 @@ def fabs(x):
 
         # catch the x=0 exception
         try:
-            lc_wrt_args = [x/abs(x)]
-            qc_wrt_args = [1/abs(x)-(x**2)/abs(x)**3]
+            lc_wrt_args = [x/fabs(x)]
+            qc_wrt_args = [1/fabs(x)-(x**2)/fabs(x)**3]
         except ZeroDivisionError:
             lc_wrt_args = [0.0]
             qc_wrt_args = [0.0]
@@ -862,12 +930,12 @@ def fabs(x):
         # The function now returns an ADF object:
         return ADF(f, lc_wrt_vars, qc_wrt_vars, cp_wrt_vars)
     else:
-        try: # pythonic: fails gracefully when x is not an array-like object
-            return [fabs(xi) for xi in x]
-        except TypeError:
-            return math.fabs(x) 
+#        try: # pythonic: fails gracefully when x is not an array-like object
+#            return [fabs(xi) for xi in x]
+#        except TypeError:
+        return math.fabs(x) 
 
-#@return_numpy_array_if_given
+@_vectorize
 def factorial(x):
     """
     Return x factorial. Uses the relationship factorial(x)==gamma(x+1) to 
@@ -875,7 +943,7 @@ def factorial(x):
     """
     return gamma(x+1)
 
-#@return_numpy_array_if_given
+@_vectorize
 def floor(x):
     """
     Return the floor of x as a float, the largest integer value less than or 
@@ -917,84 +985,77 @@ def floor(x):
         # The function now returns an ADF object:
         return ADF(f, lc_wrt_vars, qc_wrt_vars, cp_wrt_vars)
     else:
-        try: # pythonic: fails gracefully when x is not an array-like object
-            return [floor(xi) for xi in x]
-        except TypeError:
-            return math.floor(x)
+#        try: # pythonic: fails gracefully when x is not an array-like object
+#            return [floor(xi) for xi in x]
+#        except TypeError:
+        return math.floor(x)
 
-#@return_numpy_array_if_given
+@_vectorize
 def gamma(x):
     """
-    Return the Gamma function at x.
+    Return the Gamma function at x (uses the Lanczos approximation).
     """
-    if isinstance(x,ADF):
-        
-        ad_funcs = map(to_auto_diff,[x])
+#    try: # pythonic: fails gracefully when x is not an array-like object
+#        return [gamma(xi) for xi in x]
+#    except TypeError:
 
-        x = ad_funcs[0].x
-        
-        ########################################
-        # Nominal value of the constructed ADF:
-        f = gamma(x)
-        
-        ########################################
-
-        variables = ad_funcs[0]._get_variables(ad_funcs)
-        
-        if not variables or isinstance(f, bool):
-            return f
-
-        ########################################
-
-        # Calculation of the derivatives with respect to the arguments
-        # of f (ad_funcs):
-
-        lc_wrt_args = [_fourth_order_first_fd(gamma,x)]
-        qc_wrt_args = [_fourth_order_second_fd(gamma,x)]
-        cp_wrt_args = 0.0
-
-        ########################################
-        # Calculation of the derivative of f with respect to all the
-        # variables (Variable) involved.
-
-        lc_wrt_vars,qc_wrt_vars,cp_wrt_vars = _apply_chain_rule(
-                                    ad_funcs,variables,lc_wrt_args,qc_wrt_args,
-                                    cp_wrt_args)
-                                    
-        # The function now returns an ADF object:
-        return ADF(f, lc_wrt_vars, qc_wrt_vars, cp_wrt_vars)
-    
+    # This is the Lanczos approximation of the Gamma function, as copied 
+    # from the Wikipedia article: 
+    #    http://en.wikipedia.org/wiki/Lanczos_approximation
+    # It is designed to work with real and complex arguments
+    # Coefficients used by the GNU Scientific Library
+    g = 7
+    p = [0.99999999999980993, 676.5203681218851, -1259.1392167224028,
+         771.32342877765313, -176.61502916214059, 12.507343278686905,
+         -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7]
+ 
+    # Reflection formula
+    if x.real < 0.5:
+        return pi/(sin(pi*x)*gamma(1 - x))
     else:
-        try: # pythonic: fails gracefully when x is not an array-like object
-            return [gamma(xi) for xi in x]
-        except TypeError:
-            return math.gamma(x)
+        x -= 1
+        z = p[0]
+        for i in range(1, g+2):
+            z += p[i]/(x + i)
+        t = x + g + 0.5
+        return sqrt(2*pi)*t**(x+0.5)*exp(-t)*z
 
-#@return_numpy_array_if_given
+@_vectorize
 def hypot(x,y):
     """
     Return the Euclidean norm, ``sqrt(x*x + y*y)``. This is the length of the 
     vector from the origin to point ``(x, y)``.
     """
+#    try:
+#        return [hypot(xi, yi) for xi, yi in zip(x, y)]
+#    except TypeError:
+#        try:
+#            return [hypot(xi, y) for xi in x]
+#        except TypeError:
+#            try:
+#                return [hypot(x, yi) for yi in y]
+#            except TypeError:
+#                return sqrt(x*x+y*y)
     return sqrt(x*x+y*y)
     
-#@return_numpy_array_if_given
-def lgamma(x,y):
+@_vectorize
+def lgamma(x):
     """
-    Return the natural logarithm of the absolute value of the Gamma function at x.
+    Return the natural logarithm of the absolute value of the Gamma function 
+    at x.
     """
     return log(abs(gamma(x)))
     
-#@return_numpy_array_if_given
-def log(x, base=e):
+@_vectorize
+def log(x, base=None):
     """
     With one argument, return the natural logarithm of x (to base e).
 
     With two arguments, return the logarithm of x to the given base, calculated 
     as ``log(x)/log(base)``.
     """
-    if base!=e:
-        return log(x)/log(base)
+    if base is None:
+        return log(x, base=e)
     
     if isinstance(x,ADF):
         
@@ -1034,15 +1095,15 @@ def log(x, base=e):
         return ADF(f, lc_wrt_vars, qc_wrt_vars, cp_wrt_vars)
     
     else:
-        try: # pythonic: fails gracefully when x is not an array-like object
-            return [log(xi) for xi in x]
-        except TypeError:
-            if x.imag:
-                return cmath.log(x, base)
-            else:
-                return math.log(x.real, base)
+#        try: # pythonic: fails gracefully when x is not an array-like object
+#            return [log(xi) for xi in x]
+#        except TypeError:
+        if x.imag:
+            return cmath.log(x, base)
+        else:
+            return math.log(x.real, base)
 
-#@return_numpy_array_if_given
+@_vectorize
 def log10(x):
     """
     Return the base-10 logarithm of x. This is usually more accurate than 
@@ -1086,15 +1147,15 @@ def log10(x):
         return ADF(f, lc_wrt_vars, qc_wrt_vars, cp_wrt_vars)
     
     else:
-        try: # pythonic: fails gracefully when x is not an array-like object
-            return [log10(xi) for xi in x]
-        except TypeError:
-            if x.imag:
-                return cmath.log10(x)
-            else:
-                return math.log10(x.real)
+#        try: # pythonic: fails gracefully when x is not an array-like object
+#            return [log10(xi) for xi in x]
+#        except TypeError:
+        if x.imag:
+            return cmath.log10(x)
+        else:
+            return math.log10(x.real)
 
-#@return_numpy_array_if_given
+@_vectorize
 def log1p(x):
     """
     Return the base-10 logarithm of x. This is usually more accurate than 
@@ -1138,26 +1199,26 @@ def log1p(x):
         return ADF(f, lc_wrt_vars, qc_wrt_vars, cp_wrt_vars)
     
     else:
-        try: # pythonic: fails gracefully when x is not an array-like object
-            return [log1p(xi) for xi in x]
-        except TypeError:
-            return math.log1p(x)
+#        try: # pythonic: fails gracefully when x is not an array-like object
+#            return [log1p(xi) for xi in x]
+#        except TypeError:
+        return math.log1p(x)
 
-#@return_numpy_array_if_given
+@_vectorize
 def pow(x, y):
     """
     Return x raised to the power y. 
     """
     return x**y
 
-#@return_numpy_array_if_given
+@_vectorize
 def radians(x):
     """
     Converts angle x from degrees to radians.
     """
     return (pi/180)*x
     
-#@return_numpy_array_if_given
+@_vectorize
 def sin(x):
     """
     Return the sine of x radians.
@@ -1198,15 +1259,15 @@ def sin(x):
         # The function now returns an ADF object:
         return ADF(f, lc_wrt_vars, qc_wrt_vars, cp_wrt_vars)
     else:
-        try: # pythonic: fails gracefully when x is not an array-like object
-            return [sin(xi) for xi in x]
-        except TypeError:
-            if x.imag:
-                return cmath.sin(x)
-            else:
-                return math.sin(x.real)
+#        try: # pythonic: fails gracefully when x is not an array-like object
+#            return [sin(xi) for xi in x]
+#        except TypeError:
+        if x.imag:
+            return cmath.sin(x)
+        else:
+            return math.sin(x.real)
 
-#@return_numpy_array_if_given
+@_vectorize
 def sinh(x):
     """
     Return the hyperbolic sine of x.
@@ -1247,22 +1308,25 @@ def sinh(x):
         # The function now returns an ADF object:
         return ADF(f, lc_wrt_vars, qc_wrt_vars, cp_wrt_vars)
     else:
-        try: # pythonic: fails gracefully when x is not an array-like object
-            return [sinh(xi) for xi in x]
-        except TypeError:
-            if x.imag:
-                return cmath.sinh(x)
-            else:
-                return math.sinh(x.real)
+#        try: # pythonic: fails gracefully when x is not an array-like object
+#            return [sinh(xi) for xi in x]
+#        except TypeError:
+        if x.imag:
+            return cmath.sinh(x)
+        else:
+            return math.sinh(x.real)
 
-#@return_numpy_array_if_given
+@_vectorize
 def sqrt(x):
     """
     Return the square root of x.
     """
+#    try:
+#        return [xi**0.5 for xi in x]
+#    except TypeError:
     return x**0.5
             
-#@return_numpy_array_if_given
+@_vectorize
 def tan(x):
     """
     Return the tangent of x radians.
@@ -1303,15 +1367,15 @@ def tan(x):
         # The function now returns an ADF object:
         return ADF(f, lc_wrt_vars, qc_wrt_vars, cp_wrt_vars)
     else:
-        try: # pythonic: fails gracefully when x is not an array-like object
-            return [tan(xi) for xi in x]
-        except TypeError:
-            if x.imag:
-                return cmath.tan(x)
-            else:
-                return math.tan(x.real)
+#        try: # pythonic: fails gracefully when x is not an array-like object
+#            return [tan(xi) for xi in x]
+#        except TypeError:
+        if x.imag:
+            return cmath.tan(x)
+        else:
+            return math.tan(x.real)
 
-#@return_numpy_array_if_given
+@_vectorize
 def tanh(x):
     """
     Return the hyperbolic tangent of x.
@@ -1352,15 +1416,15 @@ def tanh(x):
         # The function now returns an ADF object:
         return ADF(f, lc_wrt_vars, qc_wrt_vars, cp_wrt_vars)
     else:
-        try: # pythonic: fails gracefully when x is not an array-like object
-            return [tanh(xi) for xi in x]
-        except TypeError:
-            if x.imag:
-                return cmath.tanh(x)
-            else:
-                return math.tanh(x.real)
+#        try: # pythonic: fails gracefully when x is not an array-like object
+#            return [tanh(xi) for xi in x]
+#        except TypeError:
+        if x.imag:
+            return cmath.tanh(x)
+        else:
+            return math.tanh(x.real)
 
-#@return_numpy_array_if_given
+@_vectorize
 def trunc(x):
     """
     Return the **Real** value x truncated to an **Integral** (usually a 
@@ -1409,78 +1473,91 @@ def trunc(x):
 
 ### OTHER CONVENIENCE FUNCTIONS ###############################################
 
+@_vectorize
 def csc(x):
     """
     Return the cosecant of x.
     """
     return 1.0/sin(x)
     
+@_vectorize
 def sec(x):
     """
     Return the secant of x.
     """
     return 1.0/cos(x)
     
+@_vectorize
 def cot(x):
     """
     Return the cotangent of x.
     """
     return 1.0/tan(x)
 
+@_vectorize
 def csch(x):
     """
     Return the hyperbolic cosecant of x.
     """
     return 1.0/sinh(x)
     
+@_vectorize
 def sech(x):
     """
     Return the hyperbolic secant of x.
     """
     return 1.0/cosh(x)
     
+@_vectorize
 def coth(x):
     """
     Return the hyperbolic cotangent of x.
     """
     return 1.0/tanh(x)
 
+@_vectorize
 def acsc(x):
     """
     Return the inverse cosecant of x.
     """
     return asin(1.0/x)
 
+@_vectorize
 def asec(x):
     """
     Return the inverse secant of x.
     """
     return acos(1.0/x)
     
+@_vectorize
 def acot(x):
     """
     Return the inverse cotangent of x.
     """
     return atan(1.0/x)
 
+@_vectorize
 def acsch(x):
     """
     Return the inverse hyperbolic cosecant of x.
     """
     return asinh(1.0/x)
 
+@_vectorize
 def asech(x):
     """
     Return the inverse hyperbolic secant of x.
     """
     return acosh(1.0/x)
     
+@_vectorize
 def acoth(x):
     """
     Return the inverse hyperbolic cotangent of x.
     """
     return atanh(1.0/x)
 
+@_vectorize
 def ln(x):
     """
     Return the natural logarithm of x.
