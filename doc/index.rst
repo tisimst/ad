@@ -196,7 +196,7 @@ How to cite this package
 
 If you use this package for a publication (in a journal, on the web,
 etc.), please cite it by including as much information as possible
-from the following: *Ad: a Python package for first- and 
+from the following: *ad: a Python package for first- and 
 second-order automatic differentation*, Abraham D. Lee,
 `<http://pythonhosted.org/ad/>`_. Adding the version number is optional.
 
