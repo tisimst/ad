@@ -189,23 +189,23 @@ def to_auto_diff(x):
 #        if order==1:
 #            return partial_derivative(self._function, n)
 #        elif order==2:
-#            if hasattr(n,'__getitem__'):
+#            if hasattr(n,'__iter__'):
 #                return cross_partial_derivative(self._function,n[0],n[1])
 #            else:
 #                return second_partial_derivative(self._function,n)
-#            
 #
-#def wrap(f,deriv_wrt_args=None,deriv2_wrt_args=None,deriv2c_wrt_args=None):
+#
+#def wrap(f, deriv_wrt_args=None, deriv2_wrt_args=None, deriv2c_wrt_args=None):
 #    """
 #    Wraps an arbitrary function f so that it can accept ADV/ADF objects and 
-#    return an ADF object that contains first and second partial derivatives wrt
-#    ADV objects.
-#    
+#    return an ADF object that contains first and second partial derivatives 
+#    wrt ADV objects.
+#
 #    Parameters
 #    ----------
 #    f : function
 #        Any function that returns a scalar (not a list or array-like object)
-#    
+#
 #    Optional
 #    --------
 #    deriv_wrt_args : list
@@ -222,16 +222,16 @@ def to_auto_diff(x):
 #        
 #        Thus, if the hessian of a function of three variables is:
 #            
-#                   | . d^2f/dx1dx2  d^2f/dx1dx3|
-#            H(f) = | .      .       d^2f/dx2dx3|
-#                   | .      .            .     |
+#                    | . d^2f/dx1dx2  d^2f/dx1dx3|
+#             H(f) = | .      .       d^2f/dx2dx3|
+#                    | .      .            .     |
 #        
 #        then deriv2c_wrt_args = [d^2f/dx1dx2, d^2f/dx1dx3, d^2f/dx2dx3]
 #        
 #    """
-#    
+#
 #    if deriv_wrt_args is None:
-#        deriv_wrt_args = NumericalDerivatives(f,1)
+#        deriv_wrt_args = NumericalDerivatives(f, 1)
 #    else:
 #        # Derivatives that are not defined are calculated numerically,
 #        # if there is a finite number of them (the function lambda
@@ -248,7 +248,7 @@ def to_auto_diff(x):
 #                for (k, derivative) in enumerate(deriv_wrt_args)]
 #
 #    if deriv2_wrt_args is None:
-#        deriv2_wrt_args = NumericalDerivatives(f,2)
+#        deriv2_wrt_args = NumericalDerivatives(f, 2)
 #    else:
 #        # Derivatives that are not defined are calculated numerically,
 #        # if there is a finite number of them (the function lambda
@@ -263,9 +263,9 @@ def to_auto_diff(x):
 #                second_partial_derivative(f, k) if derivative is None
 #                else derivative
 #                for (k, derivative) in enumerate(deriv2_wrt_args)]
-#    
+#
 #    if deriv2c_wrt_args is None:
-#        deriv2c_wrt_args = NumericalDerivatives(f,2)
+#        deriv2c_wrt_args = NumericalDerivatives(f, 2)
 #    else:
 #        try:
 #            len(deriv2c_wrt_args)
@@ -277,45 +277,45 @@ def to_auto_diff(x):
 #                else derivative
 #                for (k1, derivative) in enumerate(deriv2c_wrt_args)]
 #                for (k2, derivative) in enumerate(deriv2c_wrt_args)]
-#    
-#    
-#    
+#
+#
+#
 #    # THE USUAL CODE BELOW NEEDS TO BE MODIFIED ###############################
-#    
-##    ad_funcs = map(to_auto_diff,(self,val))
-##
-##    x = ad_funcs[0].x
-##    y = ad_funcs[1].x
-##    
-##    ########################################
-##    # Nominal value of the constructed ADF:
-##    f_nominal   = x + y
-##    
-##    ########################################
-##    variables = self._get_variables(ad_funcs)
-##    
-##    if not variables or isinstance(f_nominal, bool):
-##        return f
-##
-##    ########################################
-##
-##    # Calculation of the derivatives with respect to the arguments
-##    # of f (ad_funcs):
-##
-##    lc_wrt_args = [1., 1.]
-##    qc_wrt_args = [0., 0.]
-##    cp_wrt_args = 0.
-##
-##    ########################################
-##    # Calculation of the derivative of f with respect to all the
-##    # variables (Variable) involved.
-##
-##    lc_wrt_vars,qc_wrt_vars,cp_wrt_vars = _apply_chain_rule(
-##                                ad_funcs,variables,lc_wrt_args,qc_wrt_args,
-##                                cp_wrt_args)
-##                                
-##    # The function now returns an ADF object:
-##    return ADF(f_nominal, lc_wrt_vars, qc_wrt_vars, cp_wrt_vars)
+#
+#    #    ad_funcs = map(to_auto_diff,(self,val))
+#    #
+#    #    x = ad_funcs[0].x
+#    #    y = ad_funcs[1].x
+#    #    
+#    #    ########################################
+#    #    # Nominal value of the constructed ADF:
+#    #    f_nominal   = x + y
+#    #    
+#    #    ########################################
+#    #    variables = self._get_variables(ad_funcs)
+#    #    
+#    #    if not variables or isinstance(f_nominal, bool):
+#    #        return f
+#    #
+#    #    ########################################
+#    #
+#    #    # Calculation of the derivatives with respect to the arguments
+#    #    # of f (ad_funcs):
+#    #
+#    #    lc_wrt_args = [1., 1.]
+#    #    qc_wrt_args = [0., 0.]
+#    #    cp_wrt_args = 0.
+#    #
+#    #    ########################################
+#    #    # Calculation of the derivative of f with respect to all the
+#    #    # variables (Variable) involved.
+#    #
+#    #    lc_wrt_vars,qc_wrt_vars,cp_wrt_vars = _apply_chain_rule(
+#    #                                ad_funcs,variables,lc_wrt_args,qc_wrt_args,
+#    #                                cp_wrt_args)
+#    #                                
+#    #    # The function now returns an ADF object:
+#    #    return ADF(f_nominal, lc_wrt_vars, qc_wrt_vars, cp_wrt_vars)
 
 def _apply_chain_rule(ad_funcs,variables,lc_wrt_args,qc_wrt_args,
                            cp_wrt_args):
@@ -374,6 +374,49 @@ def _apply_chain_rule(ad_funcs,variables,lc_wrt_args,qc_wrt_args,
                 
     return (lc_wrt_vars,qc_wrt_vars,cp_wrt_vars)
     
+def _floor(x):
+    """
+    Return the floor of x as a float, the largest integer value less than or 
+    equal to x. This is required for the "mod" function.
+    """
+    if isinstance(x,ADF):
+        ad_funcs = map(to_auto_diff,[x])
+
+        x = ad_funcs[0].x
+        
+        ########################################
+        # Nominal value of the constructed ADF:
+        f = _floor(x)
+        
+        ########################################
+
+        variables = ad_funcs[0]._get_variables(ad_funcs)
+        
+        if not variables or isinstance(f, bool):
+            return f
+
+        ########################################
+
+        # Calculation of the derivatives with respect to the arguments
+        # of f (ad_funcs):
+
+        lc_wrt_args = [0.0]
+        qc_wrt_args = [0.0]
+        cp_wrt_args = 0.0
+
+        ########################################
+        # Calculation of the derivative of f with respect to all the
+        # variables (Variable) involved.
+
+        lc_wrt_vars,qc_wrt_vars,cp_wrt_vars = _apply_chain_rule(
+                                    ad_funcs,variables,lc_wrt_args,qc_wrt_args,
+                                    cp_wrt_args)
+                                    
+        # The function now returns an ADF object:
+        return ADF(f, lc_wrt_vars, qc_wrt_vars, cp_wrt_vars)
+    else:
+        return math.floor(x)
+
 class ADF(object):
     """
     The ADF (Automatically Differentiated Function) class contains derivative
@@ -972,11 +1015,20 @@ class ADF(object):
     def __rpow__(self,val):
         return to_auto_diff(val)**self
         
+    def __mod__(self, val):
+        return self - val*_floor(self/val)
+        
+    def __rmod__(self, val):
+        return val - self*_floor(val/self)
+        
     def __neg__(self):
         return -1*self
     
     def __pos__(self):
         return self
+        
+    def __invert__(self):
+        return -(self+1)
 
     def __abs__(self):
         ad_funcs = map(to_auto_diff, [self])
@@ -1056,7 +1108,7 @@ class ADF(object):
         return (self>val) or (self==val)
     
     def __nonzero__(self):
-        return type(ad_funcs[0].x).__nonzero__(ad_funcs[0].x)
+        return type(self.x).__nonzero__(self.x)
         
 class ADV(ADF):
     """
@@ -1098,7 +1150,7 @@ def adnumber(x, tag=None):
     --------
     
     Creating an AD object (any numeric type can be input--int, float, complex,
-    etc.):
+    etc.)::
         
         >>> from ad import adnumber
         >>> x = adnumber(2)
@@ -1111,7 +1163,7 @@ def adnumber(x, tag=None):
         >>> y
         ad(0.5, y)
 
-    Let's do some math:
+    Let's do some math::
         
         >>> x*y
         ad(1.0)
@@ -1136,8 +1188,8 @@ def adnumber(x, tag=None):
         >>> z.d(z)
         0.0
         
-    We can also use the exponential, logarithm, and trigonometric functions:
-        variables
+    We can also use the exponential, logarithm, and trigonometric functions::
+        
         >>> from ad.admath import *  # sin, exp, etc. math funcs
         >>> z = sqrt(x)*sin(erf(y)/3)
         >>> z
@@ -1151,7 +1203,7 @@ def adnumber(x, tag=None):
 
     We can also initialize multiple AD objects in the same constructor by
     supplying a sequence of values--the ``tag`` keyword is applied to all the
-    new objects:
+    new objects::
         
         >>> x, y, z = adnumber([2, 0.5, (1+3j)], tag='group1')
         >>> z
