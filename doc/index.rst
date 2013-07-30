@@ -207,7 +207,7 @@ I am greatful to Eric O. Lebigot, author of the `uncertainties package`_,
 who showed me (through his code) how to easily apply the chain rule for
 multivariate formulae.
 
-I would also like to thank Stephen Marks who contributed with feedback and
+I would also like to thank `Stephen Marks`_ who contributed with feedback and
 suggestions on using this package with `scipy.optimize`_, which greatly 
 helped improve this program.
 
@@ -236,3 +236,4 @@ following options can be chosen:
 .. _pydoc: http://docs.python.org/library/pydoc.html
 .. _NumPy: http://numpy.scipy.org/
 .. _scipy.optimize: http://docs.scipy.org/doc/scipy/reference/tutorial/optimize.html
+.. _Stephen Marks: http://economics-files.pomona.edu/marks/
