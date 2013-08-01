@@ -1072,6 +1072,34 @@ class ADF(object):
         # The function now returns an ADF object:
         return ADF(f, lc_wrt_vars, qc_wrt_vars, cp_wrt_vars)
         
+    def toInt(self):
+        """
+        Converts the base number to an ``int`` object
+        """
+        self.x = int(self.x)
+        return self
+
+    def toFloat(self):
+        """
+        Converts the base number to an ``float`` object
+        """
+        self.x = float(self.x)
+        return self
+    
+    def toLong(self):
+        """
+        Converts the base number to an ``long`` object
+        """
+        self.x = long(self.x)
+        return self
+
+    def toComplex(self):
+        """
+        Converts the base number to an ``complex`` object
+        """
+        self.x = complex(self.x)
+        return self
+    
     # coercion follows the capabilities of the respective input types
     def __int__(self):
         return int(self.x)
