@@ -181,11 +181,10 @@ def _vectorize(func):
     
     vectorized_function.__name__ = n
     vectorized_function.__module__ = m
-    vectorized_function.func_code.co_varnames = a
+    doc = 'Vectorized {:} function\n'.format(n)
     if d is not None:
-        vectorized_function.__doc__ = d
-    else:
-        vectorized_function.__doc__ = 'Vectorized "%s" function'%(n)
+        doc += d
+    vectorized_function.__doc__ = doc
             
     return vectorized_function
             
@@ -1221,7 +1220,7 @@ def radians(x):
 @_vectorize
 def sin(x):
     """
-    Return the sine of x radians.
+    Return the sine of x, in radians.
     """
     if isinstance(x,ADF):
         ad_funcs = map(to_auto_diff,[x])
@@ -1329,7 +1328,7 @@ def sqrt(x):
 @_vectorize
 def tan(x):
     """
-    Return the tangent of x radians.
+    Return the tangent of x, in radians.
     """
     if isinstance(x,ADF):
         ad_funcs = map(to_auto_diff,[x])
