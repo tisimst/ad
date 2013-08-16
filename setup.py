@@ -15,7 +15,7 @@ setup(name='ad',
     packages=['ad'],
     include_package_data=True,
     package_data = {
-        '': [r'revision_history.txt', r'README.rst'],
+        '': ['README.rst', 'revision_history.txt'],
         },
     keywords=[
         'automatic differentiation',
@@ -23,7 +23,7 @@ setup(name='ad',
         'second order',
         'derivative',
         'algorithmic differentiation',
-        'computational differentiation'
+        'computational differentiation',
         'optimization'],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
