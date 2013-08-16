@@ -62,8 +62,8 @@ Now for some math::
     >>> w
     ad(18.0)
 
-Using more advanced math functions like those in the standard math_ and cmath_
-modules::
+Using more advanced math functions like those in the standard `math`_ 
+and `cmath`_ modules::
 
     >>> from ad.admath import *  # sin, cos, log, exp, sqrt, etc.
     >>> sin(1 + x**2)
@@ -100,7 +100,7 @@ Some convenience functions (useful in optimization)::
     >>> sum_value.gradient(y)  # works well with input arrays
     [1.0, 1.0, 1.0]
 
-Working with NumPy_ arrays (many functions should work out-of-the-box)::
+Working with `NumPy`_ arrays (many functions should work out-of-the-box)::
 
     >>> import numpy as np
     >>> arr = np.array([1, 2, 3])
@@ -153,7 +153,7 @@ Main Features
 
 - **Transparent calculations with derivatives: no or little 
   modification of existing code** is needed, including when using
-  the Numpy_ module.
+  the `Numpy`_ module.
 
 - **Almost all mathematical operations** are supported, including
   functions from the standard math_ module (sin, cos, exp, erf, 
@@ -167,7 +167,7 @@ Main Features
   finite difference formula).
 
 - **Real and complex** arithmetic handled seamlessly. Treat objects as you
-  normally would using the math_ and cmath_ functions, but with their new 
+  normally would using the `math`_ and `cmath`_ functions, but with their new 
   ``admath`` counterparts.
   
 - **Automatic gradient and hessian function generator** for optimization 
@@ -177,7 +177,7 @@ Installation
 ------------
 
 You have several easy, convenient options to install the ``ad`` package 
-(administrative privileges may be required)
+(administrative privileges may be required):
 
 1. Download the package files below, unzip to any directory, and run 
    ``python setup.py install`` from the command-line.
@@ -214,7 +214,7 @@ Acknowledgements
 
 The author expresses his thanks to :
 
-- `Eric O. LEBIGOT (EOL)`_, author of the uncertainties_ package, for providing 
+- `Eric O. LEBIGOT (EOL)`_, author of the `uncertainties`_ package, for providing 
   code insight and inspiration
 - Stephen Marks, professor at Pomona College, for useful feedback concerning 
   the interface with optimization routines in ``scipy.optimize``.
