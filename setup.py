@@ -24,7 +24,6 @@ setup(name='ad',
         'derivative',
         'algorithmic differentiation',
         'computational differentiation'
-        'ODE',
         'optimization'],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
