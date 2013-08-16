@@ -1,7 +1,7 @@
 from distutils.core import setup
 
 setup(name='ad',
-    version='1.1.1',
+    version='1.1.2',
     author='Abraham Lee',
     description='Fast, transparent first- and second-order automatic differentiation',
     author_email='tisimst@gmail.com',
