@@ -13,7 +13,7 @@ setup(name='ad',
     long_description=long_description,
     package_dir={'ad':''},
     packages=['ad'],
-#    include_package_data=True,
+    include_package_data=True,
     package_data = {
         '': ['revision_history.txt', 'README.rst'],
         },
