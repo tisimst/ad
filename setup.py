@@ -15,7 +15,7 @@ setup(name='ad',
     packages=['ad'],
     include_package_data=True,
     package_data = {
-        '': ['revision_history.txt', 'README.rst'],
+        '': [r'revision_history.txt', r'README.rst'],
         },
     keywords=[
         'automatic differentiation',
