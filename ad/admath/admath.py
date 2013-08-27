@@ -153,26 +153,27 @@ def _vectorize(func):
     - m x 1
     - 1 x 1
     """
-    def vectorized_function(*args):
+    def vectorized_function(*args, **kwargs):
         if len(args)==1:
             x = args[0]
             try:
-                return [vectorized_function(xi) for xi in x]
+                return [vectorized_function(xi, **kwargs) for xi in x]
             except TypeError:
-                return func(x)
+                return func(x, **kwargs)
                 
         elif len(args)==2:
             x, y = args
             try:
-                return [vectorized_function(xi, yi) for xi, yi in zip(x, y)]
+                return [vectorized_function(xi, yi, **kwargs) 
+                        for xi, yi in zip(x, y)]
             except TypeError:
                 try:
-                    return [vectorized_function(xi, y) for xi in x]
+                    return [vectorized_function(xi, y, **kwargs) for xi in x]
                 except TypeError:
                     try:
-                        return [vectorized_function(x, yi) for yi in y]
+                        return [vectorized_function(x, yi, **kwargs) for yi in y]
                     except TypeError:
-                        return func(x, y)
+                        return func(x, y, **kwargs)
     
     n = func.__name__
     m = func.__module__
