@@ -499,8 +499,48 @@ class ADF(object):
         self._trace = None
     
     def __hash__(self):
-      return id(self)
-    
+        return id(self)
+
+    def trace_me(self):
+        """
+        Make this object traceable in future derivative calculations (not
+        retroactive).
+        
+        Caution
+        -------
+        When using ADF (i.e. dependent variable) objects as input to the
+        derivative class methods, the returning value may only be useful
+        with the ``d(...)`` and ``d2(...)`` methods.
+        
+        DO NOT USE ADF OBJECTS AS INPUTS TO THE ``d2c(...)`` METHOD SINCE 
+        THE RESULT IS NOT LIKELY TO BE NUMERICALLY MEANINGFUL :)
+        
+        Example
+        -------
+        ::
+        
+            >>> x = adnumber(2.1)
+            >>> y = x**2
+            >>> y.d(y)  # Dependent variables by default aren't traced
+            0.0
+            
+            # Initialize tracing
+            >>> y.trace_me()
+            >>> y.d(y)  # Now we get an answer!
+            1.0
+            >>> z = 2*y/y**2
+            >>> z.d(y)  # Would have been 0.0 before trace activiation
+            -0.10283780934898525
+            
+            # Check the chain rule
+            >>> z.d(y)*y.d(x) == z.d(x)  # dz/dy * dy/dx == dz/dx
+            True
+            
+        """
+        if not self._lc.has_key(self):
+            self._lc[self] = 1.0
+            self._qc[self] = 0.0
+        
     @property
     def real(self):
         return self.x.real
