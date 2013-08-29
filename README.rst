@@ -162,10 +162,6 @@ Main Features
   Comparison operators follow the **same rules as the underlying numeric 
   types**.
 
-- Nearly all derivative calculations are performed **analytically**
-  (only the ``gamma`` and ``lgamma`` functions use a high-accuracy 
-  finite difference formula).
-
 - **Real and complex** arithmetic handled seamlessly. Treat objects as you
   normally would using the `math`_ and `cmath`_ functions, but with their new 
   ``admath`` counterparts.
