@@ -186,6 +186,8 @@ You have several easy, convenient options to install the ``ad`` package
    
 4. If ``pip`` is installed, run ``pip --upgrade ad`` from the command-line.
 
+5. Download the *bleeding-edge* version on GitHub_
+
 Python 3
 --------
 
@@ -225,4 +227,5 @@ The author expresses his thanks to :
 .. _scipy.optimize: http://docs.scipy.org/doc/scipy/reference/optimize.html
 .. _Abraham Lee: mailto:tisimst@gmail.com
 .. _package documentation: http://pythonhosted.org/ad
+.. _GitHub: https://github.com/tisimst/ad
 
