@@ -512,8 +512,8 @@ class ADF(object):
         derivative class methods, the returning value may only be useful
         with the ``d(...)`` and ``d2(...)`` methods.
         
-        DO NOT USE ADF OBJECTS AS INPUTS TO THE ``d2c(...)`` METHOD SINCE 
-        THE RESULT IS NOT LIKELY TO BE NUMERICALLY MEANINGFUL :)
+        DO NOT MIX ADV AND ADF OBJECTS AS INPUTS TO THE ``d2c(...)`` METHOD 
+        SINCE THE RESULT IS NOT LIKELY TO BE NUMERICALLY MEANINGFUL :)
         
         Example
         -------
