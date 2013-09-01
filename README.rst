@@ -101,6 +101,7 @@ Some convenience functions (useful in optimization)::
     [1.0, 1.0, 1.0]
     
     # multiple dependents, multiple independents, first derivatives
+    >>> from ad import jacobian
     >>> jacobian([w, square], [x, z])
     [[9.0, 12.0], [4.0, 0.0]]
 
