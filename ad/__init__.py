@@ -15,7 +15,7 @@ try:
 except ImportError:
     numpy_installed = False
 
-__version_info__ = (1, 1, 3)
+__version_info__ = (1, 1, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
 __author__ = 'Abraham Lee'
@@ -48,275 +48,6 @@ def to_auto_diff(x):
         type(x))
         )
         
-#def partial_derivative(f, param_num):
-#    """
-#    Returns a function that numerically calculates the partial
-#    derivative of function f with respect to its argument number
-#    param_num.
-#    """
-#
-#    def partial_derivative_of_f(*args):
-#        """
-#        Partial derivative, calculated with the (-epsilon, +epsilon)
-#        method, which is more precise than the (0, +epsilon) method.
-#        """
-#        # f_nominal_value = f(*args)
-#
-#        shifted_args = list(args)  # Copy, and conversion to a mutable
-#
-#        # The step is relative to the parameter being varied, so that
-#        # shifting it does not suffer from finite precision:
-#        step = 1e-8*abs(shifted_args[param_num])
-#        if not step:
-#            # Arbitrary, but "small" with respect to 1, and of the
-#            # order of the square root of the precision of double
-#            # precision floats:
-#            step = 1e-8
-#
-#        shifted_args[param_num] += step
-#        shifted_f_plus = f(*shifted_args)
-#        
-#        shifted_args[param_num] -= 2*step  # Optimization: only 1 list copy
-#        shifted_f_minus = f(*shifted_args)
-#
-#        return (shifted_f_plus - shifted_f_minus)/2/step
-#
-#    return partial_derivative_of_f
-#
-#def second_partial_derivative(f, param_num):
-#    """
-#    Returns a function that numerically calculates the second partial
-#    derivative of function f with respect to its argument number.
-#    """
-#    def second_partial_derivative_of_f(*args):
-#        """
-#        Partial derivative, calculated with the (-epsilon, +epsilon)
-#        method, which is more precise than the (0, +epsilon) method.
-#        """
-#        f_nominal_value = f(*args)
-#
-#        shifted_args = list(args)  # Copy, and conversion to a mutable
-#
-#        # The step is relative to the parameter being varied, so that
-#        # shifting it does not suffer from finite precision:
-#        step = 1e-8*abs(shifted_args[param_num])
-#        if not step:
-#            # Arbitrary, but "small" with respect to 1, and of the
-#            # order of the square root of the precision of double
-#            # precision floats:
-#            step = 1e-8
-#
-#        shifted_args[param_num] += step
-#        shifted_f_plus = f(*shifted_args)
-#        
-#        shifted_args[param_num] -= 2*step  # Optimization: only 1 list copy
-#        shifted_f_minus = f(*shifted_args)
-#
-#        return (shifted_f_plus - 2*f_nominal_value + shifted_f_minus)/step**2
-#
-#    return second_partial_derivative_of_f
-#
-#def cross_partial_derivative(f, param_num1, param_num2):
-#    """
-#    Returns a function that numerically calculates the cross-second partial
-#    derivative of function f with respect to its two argument numbers.
-#    """
-#    if param_num1==param_num2:
-#        return second_partial_derivative(f,param_num1)
-#        
-#    def cross_partial_derivative_of_f(*args):
-#        """
-#        Partial derivative, calculated with the (-epsilon, +epsilon)
-#        method, which is more precise than the (0, +epsilon) method.
-#        """
-##        f_nominal_value = f(*args)
-#
-#        shifted_args = list(args)  # Copy, and conversion to a mutable
-#
-#        # The step is relative to the parameter being varied, so that
-#        # shifting it does not suffer from finite precision:
-#        step1 = 1e-8*abs(shifted_args[param_num1])
-#        step2 = 1e-8*abs(shifted_args[param_num2])
-#        if not step1:
-#            # Arbitrary, but "small" with respect to 1, and of the
-#            # order of the square root of the precision of double
-#            # precision floats:
-#            step1 = 1e-8
-#        if not step2:
-#            # Arbitrary, but "small" with respect to 1, and of the
-#            # order of the square root of the precision of double
-#            # precision floats:
-#            step2 = 1e-8
-#
-#        shifted_args[param_num1] += step1
-#        shifted_args[param_num2] += step2
-#        shifted_f_plus_plus = f(*shifted_args)
-#        
-#        shifted_args[param_num1] -= 2*step1  # Optimization: only 1 list copy
-#        shifted_f_minus_plus = f(*shifted_args)
-#
-#        shifted_args[param_num1] += 2*step1
-#        shifted_args[param_num2] -= 2*step2
-#        shifted_f_plus_minus = f(*shifted_args)
-#        
-#        shifted_args[param_num1] -= 2*step1  # Optimization: only 1 list copy
-#        shifted_f_minus_minus = f(*shifted_args)
-#
-#        return ((shifted_f_plus_plus - shifted_f_minus_plus)-\
-#                (shifted_f_plus_minus - shifted_f_minus_minus))/4/step1/step2
-#
-#    return cross_partial_derivative_of_f
-#
-#class NumericalDerivatives(object):
-#    """
-#    Convenient access to the partial derivatives of a function,
-#    calculated numerically.
-#    """
-#    # This is not a list because the number of arguments of the
-#    # function is not known in advance, in general.
-#
-#    def __init__(self, function, order):
-#        """
-#        'function' is the function whose derivatives can be computed.
-#        """
-#        self._function = function
-#        self._order = order
-#
-#    def __getitem__(self, n, order=1):
-#        """
-#        Returns the n-th numerical derivative of the function.
-#        """
-#        if order==1:
-#            return partial_derivative(self._function, n)
-#        elif order==2:
-#            if hasattr(n,'__iter__'):
-#                return cross_partial_derivative(self._function,n[0],n[1])
-#            else:
-#                return second_partial_derivative(self._function,n)
-#
-#
-#def wrap(f, deriv_wrt_args=None, deriv2_wrt_args=None, deriv2c_wrt_args=None):
-#    """
-#    Wraps an arbitrary function f so that it can accept ADV/ADF objects and 
-#    return an ADF object that contains first and second partial derivatives 
-#    wrt ADV objects.
-#
-#    Parameters
-#    ----------
-#    f : function
-#        Any function that returns a scalar (not a list or array-like object)
-#
-#    Optional
-#    --------
-#    deriv_wrt_args : list
-#        1st derivatives of f with respect to its input arguments (pure linear
-#        terms)
-#    deriv2_wrt_args : list
-#        2nd derivatives of f with respect to its input arguments (pure 
-#        quadratic terms)
-#    deriv2c_wrt_args : list
-#        2nd cross-product derivatives of f with respect to its input arguments
-#        (i.e., if f(x,y), then this only contains d^2f/dxdy). This list should
-#        contain the upper triangle of the hessian matrix (not including the
-#        diagonal, pure quadratic terms), with entries arranged row by row.
-#        
-#        Thus, if the hessian of a function of three variables is:
-#            
-#                    | . d^2f/dx1dx2  d^2f/dx1dx3|
-#             H(f) = | .      .       d^2f/dx2dx3|
-#                    | .      .            .     |
-#        
-#        then deriv2c_wrt_args = [d^2f/dx1dx2, d^2f/dx1dx3, d^2f/dx2dx3]
-#        
-#    """
-#
-#    if deriv_wrt_args is None:
-#        deriv_wrt_args = NumericalDerivatives(f, 1)
-#    else:
-#        # Derivatives that are not defined are calculated numerically,
-#        # if there is a finite number of them (the function lambda
-#        # *args: fsum(args) has a non-defined number of arguments, as
-#        # it just performs a sum):
-#        try:  # Is the number of derivatives fixed?
-#            len(deriv_wrt_args)
-#        except TypeError:
-#            pass
-#        else:
-#            deriv_wrt_args = [
-#                partial_derivative(f, k) if derivative is None
-#                else derivative
-#                for (k, derivative) in enumerate(deriv_wrt_args)]
-#
-#    if deriv2_wrt_args is None:
-#        deriv2_wrt_args = NumericalDerivatives(f, 2)
-#    else:
-#        # Derivatives that are not defined are calculated numerically,
-#        # if there is a finite number of them (the function lambda
-#        # *args: fsum(args) has a non-defined number of arguments, as
-#        # it just performs a sum):
-#        try:  # Is the number of derivatives fixed?
-#            len(deriv2_wrt_args)
-#        except TypeError:
-#            pass
-#        else:
-#            deriv2_wrt_args = [
-#                second_partial_derivative(f, k) if derivative is None
-#                else derivative
-#                for (k, derivative) in enumerate(deriv2_wrt_args)]
-#
-#    if deriv2c_wrt_args is None:
-#        deriv2c_wrt_args = NumericalDerivatives(f, 2)
-#    else:
-#        try:
-#            len(deriv2c_wrt_args)
-#        except TypeError:
-#            pass
-#        else:
-#            deriv2c_wrt_args = [[
-#                cross_partial_derivative(f,k1,k2) if derivative is None and k1<k2
-#                else derivative
-#                for (k1, derivative) in enumerate(deriv2c_wrt_args)]
-#                for (k2, derivative) in enumerate(deriv2c_wrt_args)]
-#
-#
-#
-#    # THE USUAL CODE BELOW NEEDS TO BE MODIFIED ###############################
-#
-#    #    ad_funcs = map(to_auto_diff,(self,val))
-#    #
-#    #    x = ad_funcs[0].x
-#    #    y = ad_funcs[1].x
-#    #    
-#    #    ########################################
-#    #    # Nominal value of the constructed ADF:
-#    #    f_nominal   = x + y
-#    #    
-#    #    ########################################
-#    #    variables = self._get_variables(ad_funcs)
-#    #    
-#    #    if not variables or isinstance(f_nominal, bool):
-#    #        return f
-#    #
-#    #    ########################################
-#    #
-#    #    # Calculation of the derivatives with respect to the arguments
-#    #    # of f (ad_funcs):
-#    #
-#    #    lc_wrt_args = [1., 1.]
-#    #    qc_wrt_args = [0., 0.]
-#    #    cp_wrt_args = 0.
-#    #
-#    #    ########################################
-#    #    # Calculation of the derivative of f with respect to all the
-#    #    # variables (Variable) involved.
-#    #
-#    #    lc_wrt_vars,qc_wrt_vars,cp_wrt_vars = _apply_chain_rule(
-#    #                                ad_funcs,variables,lc_wrt_args,qc_wrt_args,
-#    #                                cp_wrt_args)
-#    #                                
-#    #    # The function now returns an ADF object:
-#    #    return ADF(f_nominal, lc_wrt_vars, qc_wrt_vars, cp_wrt_vars)
-
 def _apply_chain_rule(ad_funcs,variables,lc_wrt_args,qc_wrt_args,
                            cp_wrt_args):
     """
@@ -499,8 +230,48 @@ class ADF(object):
         self._trace = None
     
     def __hash__(self):
-      return id(self)
-    
+        return id(self)
+
+    def trace_me(self):
+        """
+        Make this object traceable in future derivative calculations (not
+        retroactive).
+        
+        Caution
+        -------
+        When using ADF (i.e. dependent variable) objects as input to the
+        derivative class methods, the returning value may only be useful
+        with the ``d(...)`` and ``d2(...)`` methods.
+        
+        DO NOT MIX ADV AND ADF OBJECTS AS INPUTS TO THE ``d2c(...)`` METHOD 
+        SINCE THE RESULT IS NOT LIKELY TO BE NUMERICALLY MEANINGFUL :)
+        
+        Example
+        -------
+        ::
+        
+            >>> x = adnumber(2.1)
+            >>> y = x**2
+            >>> y.d(y)  # Dependent variables by default aren't traced
+            0.0
+            
+            # Initialize tracing
+            >>> y.trace_me()
+            >>> y.d(y)  # Now we get an answer!
+            1.0
+            >>> z = 2*y/y**2
+            >>> z.d(y)  # Would have been 0.0 before trace activiation
+            -0.10283780934898525
+            
+            # Check the chain rule
+            >>> z.d(y)*y.d(x) == z.d(x)  # dz/dy * dy/dx == dz/dx
+            True
+            
+        """
+        if not self._lc.has_key(self):
+            self._lc[self] = 1.0
+            self._qc[self] = 0.0
+        
     @property
     def real(self):
         return self.x.real

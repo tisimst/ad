@@ -162,10 +162,6 @@ Main Features
   Comparison operators follow the **same rules as the underlying numeric 
   types**.
 
-- Nearly all derivative calculations are performed **analytically**
-  (only the ``gamma`` and ``lgamma`` functions use a high-accuracy 
-  finite difference formula).
-
 - **Real and complex** arithmetic handled seamlessly. Treat objects as you
   normally would using the `math`_ and `cmath`_ functions, but with their new 
   ``admath`` counterparts.
@@ -189,6 +185,8 @@ You have several easy, convenient options to install the ``ad`` package
    from the command-line.
    
 4. If ``pip`` is installed, run ``pip --upgrade ad`` from the command-line.
+
+5. Download the *bleeding-edge* version on GitHub_
 
 Python 3
 --------
@@ -229,4 +227,5 @@ The author expresses his thanks to :
 .. _scipy.optimize: http://docs.scipy.org/doc/scipy/reference/optimize.html
 .. _Abraham Lee: mailto:tisimst@gmail.com
 .. _package documentation: http://pythonhosted.org/ad
+.. _GitHub: https://github.com/tisimst/ad
 
