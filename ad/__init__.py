@@ -20,7 +20,7 @@ __version__ = '.'.join(map(str, __version_info__))
 
 __author__ = 'Abraham Lee'
 
-__all__ = ['adnumber', 'gh']
+__all__ = ['adnumber', 'gh', 'jacobian']
 
 CONSTANT_TYPES = (float, int, long, complex)
 
@@ -1364,3 +1364,54 @@ def gh(func):
 
     return grad, hess
         
+def jacobian(adfuns, advars):
+    """
+    Calculate the Jacobian matrix
+    
+    Parameters
+    ----------
+    adfuns : array
+        An array of AD objects (best when they are DEPENDENT AD variables).
+    advars : array
+        An array of AD objects (best when they are INDEPENDENT AD variables).
+        
+    Returns
+    -------
+    jac : 2d-array
+        Each row is the gradient of each ``adfun`` with respect to each 
+        ``advar``, all in the order specified for both.
+    
+    Example
+    -------
+    ::
+        
+        >>> x, y, z = adnumber([1.0, 2.0, 3.0])
+        >>> u, v, w = x + y + z, x*y/z, (z - x)**y
+        >>> jacobian([u, v, w], [x, y, z])
+        [[  1.0     ,  1.0     ,  1.0     ], 
+         [  0.666666,  0.333333, -0.222222], 
+         [ -4.0     ,  2.772589,  4.0     ]]
+        
+    """
+    # Test the dependent variables to see if an array is given
+    try:
+        adfuns[0]
+    except (TypeError, AttributeError):  # if only one dependent given
+        adfuns = [adfuns]
+    
+    # Test the independent variables to see if an array is given
+    try:
+        advars[0]
+    except (TypeError, AttributeError):
+        advars = [advars]
+
+    # Now, loop through each dependent variable, iterating over the independent
+    # variables, collecting each derivative, if it exists
+    jac = []
+    for adfun in adfuns:
+        if hasattr(adfun, 'gradient'):
+            jac.append(adfun.gradient(advars))
+        else:
+            jac.append([0.0]*len(advars))
+    
+    return jac
