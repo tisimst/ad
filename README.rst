@@ -189,7 +189,8 @@ You have several easy, convenient options to install the ``ad`` package
 3. If ``setuptools`` is installed, run ``easy_install --upgrade ad`` 
    from the command-line.
    
-4. If ``pip`` is installed, run ``pip --upgrade ad`` from the command-line.
+4. If ``pip`` is installed, run ``pip install --upgrade ad`` from the 
+   command-line.
 
 5. Download the *bleeding-edge* version on GitHub_
 
