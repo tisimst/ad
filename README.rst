@@ -34,7 +34,7 @@ Let's start with the main import that all numbers use to track derivatives::
 
     >>> from ad import adnumber
 
-Creating AD objects (either a scalar or an array is acceptable)::
+Creating AD objects (either a scalar or an N-dimensional array is acceptable)::
 
     >>> x = adnumber(2.0)
     >>> x
@@ -99,6 +99,10 @@ Some convenience functions (useful in optimization)::
     
     >>> sum_value.gradient(y)  # works well with input arrays
     [1.0, 1.0, 1.0]
+    
+    # multiple dependents, multiple independents, first derivatives
+    >>> jacobian([w, square], [x, z])
+    [[9.0, 12.0], [4.0, 0.0]]
 
 Working with `NumPy`_ arrays (many functions should work out-of-the-box)::
 
