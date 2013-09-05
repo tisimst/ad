@@ -752,23 +752,25 @@ class ADF(object):
         # Calculation of the derivatives with respect to the arguments
         # of f (ad_funcs):
 
-        if isinstance(x, complex) or isinstance(y, complex):
+        if x.imag or y.imag:
             if abs(x)>0 and ad_funcs[1].d(ad_funcs[1])!=0:
-                lc_wrt_args = [y*x**(y-1), x**y*cmath.log(x)]
-                qc_wrt_args = [y*(y-1)*x**(y-2), (cmath.log(x))**2]
-                cp_wrt_args = x**(y-1)*(x*cmath.log(x)+y)
+                lc_wrt_args = [y*x**(y - 1), x**y*cmath.log(x)]
+                qc_wrt_args = [y*(y - 1)*x**(y - 2), x**y*(cmath.log(x))**2]
+                cp_wrt_args = x**(y - 1)*(y*cmath.log(x) + 1)/x
             else:
-                lc_wrt_args = [y*x**(y-1), 0.]
-                qc_wrt_args = [y*(y-1)*x**(y-2), 0.]
+                lc_wrt_args = [y*x**(y - 1), 0.]
+                qc_wrt_args = [y*(y - 1)*x**(y - 2), 0.]
                 cp_wrt_args = 0.
         else:
+            x = x.real
+            y = y.real
             if x>0 and ad_funcs[1].d(ad_funcs[1])!=0:
-                lc_wrt_args = [y*x**(y-1), x**y*math.log(x)]
-                qc_wrt_args = [y*(y-1)*x**(y-2), (math.log(x))**2]
-                cp_wrt_args = x**(y-1)*(x*math.log(x)+y)
+                lc_wrt_args = [y*x**(y - 1), x**y*math.log(x)]
+                qc_wrt_args = [y*(y - 1)*x**(y - 2), x**y*(math.log(x))**2]
+                cp_wrt_args = x**y*(y*math.log(x) + 1)/x
             else:
-                lc_wrt_args = [y*x**(y-1), 0.]
-                qc_wrt_args = [y*(y-1)*x**(y-2), 0.]
+                lc_wrt_args = [y*x**(y - 1), 0.]
+                qc_wrt_args = [y*(y - 1)*x**(y - 2), 0.]
                 cp_wrt_args = 0.
             
 
