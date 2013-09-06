@@ -860,13 +860,6 @@ class ADF(object):
         self.x = float(self.x)
         return self
     
-    def toLong(self):
-        """
-        Converts the base number to an ``long`` object
-        """
-        self.x = long(self.x)
-        return self
-
     def toComplex(self):
         """
         Converts the base number to an ``complex`` object
@@ -880,9 +873,6 @@ class ADF(object):
     
     def __float__(self):
         return float(self.x)
-    
-    def __long__(self):
-        return long(self.x)
     
     def __complex__(self):
         return complex(self.x)
