@@ -54,5 +54,6 @@ distutils.core.setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Utilities'
         ],
-    cmdclass={'build_py': build_py}
+    cmdclass={'build_py': build_py},
+    use_2to3=True,
     )
