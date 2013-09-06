@@ -8,6 +8,7 @@ import math
 import cmath
 import copy
 from random import randint
+from numbers import Number
 
 try:
     import numpy
@@ -22,7 +23,7 @@ __author__ = 'Abraham Lee'
 
 __all__ = ['adnumber', 'gh', 'jacobian']
 
-CONSTANT_TYPES = (float, int, long, complex)
+CONSTANT_TYPES = Number
 
 def to_auto_diff(x):
     """

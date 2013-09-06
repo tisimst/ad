@@ -15,7 +15,7 @@ def read(fname):
 #setup(
 distutils.core.setup(
     name='ad',
-    version='1.1.4',
+    version='1.1.5',
     author='Abraham Lee',
     author_email='tisimst@gmail.com',
     description='Fast, transparent first- and second-order automatic differentiation',
