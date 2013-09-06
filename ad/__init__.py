@@ -17,7 +17,7 @@ except ImportError:
     numpy_installed = False
 
 __version_info__ = (1, 1, 4)
-__version__ = '.'.join(map(str, __version_info__))
+__version__ = '.'.join(list(map(str, __version_info__)))
 
 __author__ = 'Abraham Lee'
 
@@ -112,7 +112,7 @@ def _floor(x):
     equal to x. This is required for the "mod" function.
     """
     if isinstance(x,ADF):
-        ad_funcs = map(to_auto_diff,[x])
+        ad_funcs = list(map(to_auto_diff,[x]))
 
         x = ad_funcs[0].x
         
@@ -580,7 +580,7 @@ class ADF(object):
         return variables
     
     def __add__(self, val):
-        ad_funcs = map(to_auto_diff, (self, val))
+        ad_funcs = list(map(to_auto_diff, (self, val)))
 
         x = ad_funcs[0].x
         y = ad_funcs[1].x
@@ -621,7 +621,7 @@ class ADF(object):
         return self+val
 
     def __mul__(self, val):
-        ad_funcs = map(to_auto_diff, (self, val))
+        ad_funcs = list(map(to_auto_diff, (self, val)))
 
         x = ad_funcs[0].x
         y = ad_funcs[1].x
@@ -667,7 +667,7 @@ class ADF(object):
         return self.__truediv__(val)
     
     def __truediv__(self, val):
-        ad_funcs = map(to_auto_diff, (self, val))
+        ad_funcs = list(map(to_auto_diff, (self, val)))
 
         x = ad_funcs[0].x
         y = ad_funcs[1].x
@@ -732,7 +732,7 @@ class ADF(object):
         return -1*self + val
 
     def __pow__(self, val):
-        ad_funcs = map(to_auto_diff, (self, val))
+        ad_funcs = list(map(to_auto_diff, (self, val)))
         
         x = ad_funcs[0].x
         y = ad_funcs[1].x
@@ -805,7 +805,7 @@ class ADF(object):
         return -(self+1)
 
     def __abs__(self):
-        ad_funcs = map(to_auto_diff, [self])
+        ad_funcs = list(map(to_auto_diff, [self]))
 
         x = ad_funcs[0].x
         
@@ -879,21 +879,21 @@ class ADF(object):
         
     # let the respective numeric types take care of the comparison operators
     def __eq__(self, val):
-        ad_funcs = map(to_auto_diff, [self, val])
+        ad_funcs = list(map(to_auto_diff, [self, val]))
         return ad_funcs[0].x==ad_funcs[1].x
     
     def __ne__(self, val):
         return not self==val
 
     def __lt__(self, val):
-        ad_funcs = map(to_auto_diff, [self, val])
+        ad_funcs = list(map(to_auto_diff, [self, val]))
         return ad_funcs[0].x<ad_funcs[1].x
     
     def __le__(self, val):
         return (self<val) or (self==val)
     
     def __gt__(self, val):
-        ad_funcs = map(to_auto_diff, [self, val])
+        ad_funcs = list(map(to_auto_diff, [self, val]))
         return ad_funcs[0].x>ad_funcs[1].x
     
     def __ge__(self, val):

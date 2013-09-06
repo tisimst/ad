@@ -194,7 +194,7 @@ def acos(x):
     Return the arc cosine of x, in radians.
     """
     if isinstance(x,ADF):
-        ad_funcs = map(to_auto_diff,[x])
+        ad_funcs = list(map(to_auto_diff,[x]))
 
         x = ad_funcs[0].x
         
@@ -244,7 +244,7 @@ def acosh(x):
     Return the inverse hyperbolic cosine of x.
     """
     if isinstance(x,ADF):
-        ad_funcs = map(to_auto_diff,[x])
+        ad_funcs = list(map(to_auto_diff,[x]))
 
         x = ad_funcs[0].x
         
@@ -293,7 +293,7 @@ def asin(x):
     Return the arc sine of x, in radians.
     """
     if isinstance(x,ADF):
-        ad_funcs = map(to_auto_diff,[x])
+        ad_funcs = list(map(to_auto_diff,[x]))
 
         x = ad_funcs[0].x
         
@@ -342,7 +342,7 @@ def asinh(x):
     Return the inverse hyperbolic sine of x.
     """
     if isinstance(x,ADF):
-        ad_funcs = map(to_auto_diff,[x])
+        ad_funcs = list(map(to_auto_diff,[x]))
 
         x = ad_funcs[0].x
         
@@ -391,7 +391,7 @@ def atan(x):
     Return the arc tangent of x, in radians
     """
     if isinstance(x,ADF):
-        ad_funcs = map(to_auto_diff,[x])
+        ad_funcs = list(map(to_auto_diff,[x]))
 
         x = ad_funcs[0].x
         
@@ -465,7 +465,7 @@ def atanh(x):
     Return the inverse hyperbolic tangent of x.
     """
     if isinstance(x,ADF):
-        ad_funcs = map(to_auto_diff,[x])
+        ad_funcs = list(map(to_auto_diff,[x]))
 
         x = ad_funcs[0].x
         
@@ -581,7 +581,7 @@ def ceil(x):
     or equal to x.
     """
     if isinstance(x,ADF):
-        ad_funcs = map(to_auto_diff,[x])
+        ad_funcs = list(map(to_auto_diff,[x]))
 
         x = ad_funcs[0].x
         
@@ -627,7 +627,7 @@ def cos(x):
     Return the cosine of x radians.
     """
     if isinstance(x,ADF):
-        ad_funcs = map(to_auto_diff,[x])
+        ad_funcs = list(map(to_auto_diff,[x]))
 
         x = ad_funcs[0].x
         
@@ -676,7 +676,7 @@ def cosh(x):
     Return the hyperbolic cosine of x.
     """
     if isinstance(x,ADF):
-        ad_funcs = map(to_auto_diff,[x])
+        ad_funcs = list(map(to_auto_diff,[x]))
 
         x = ad_funcs[0].x
         
@@ -732,7 +732,7 @@ def erf(x):
     Return the error function at x.
     """
     if isinstance(x,ADF):
-        ad_funcs = map(to_auto_diff,[x])
+        ad_funcs = list(map(to_auto_diff,[x]))
 
         x = ad_funcs[0].x
         
@@ -785,7 +785,7 @@ def exp(x):
     Return the exponential value of x
     """
     if isinstance(x,ADF):
-        ad_funcs = map(to_auto_diff,[x])
+        ad_funcs = list(map(to_auto_diff,[x]))
 
         x = ad_funcs[0].x
         
@@ -842,7 +842,7 @@ def expm1(x):
 
     """
     if isinstance(x,ADF):
-        ad_funcs = map(to_auto_diff,[x])
+        ad_funcs = list(map(to_auto_diff,[x]))
 
         x = ad_funcs[0].x
         
@@ -888,7 +888,7 @@ def fabs(x):
     Return the absolute value of x.
     """
     if isinstance(x,ADF):
-        ad_funcs = map(to_auto_diff,[x])
+        ad_funcs = list(map(to_auto_diff,[x]))
 
         x = ad_funcs[0].x
         
@@ -949,7 +949,7 @@ def floor(x):
     equal to x.
     """
     if isinstance(x,ADF):
-        ad_funcs = map(to_auto_diff,[x])
+        ad_funcs = list(map(to_auto_diff,[x]))
 
         x = ad_funcs[0].x
         
@@ -1081,7 +1081,7 @@ def log(x, base=None):
     
     if isinstance(x,ADF):
         
-        ad_funcs = map(to_auto_diff,[x])
+        ad_funcs = list(map(to_auto_diff,[x]))
 
         x = ad_funcs[0].x
         
@@ -1133,7 +1133,7 @@ def log10(x):
     """
     if isinstance(x,ADF):
         
-        ad_funcs = map(to_auto_diff,[x])
+        ad_funcs = list(map(to_auto_diff,[x]))
 
         x = ad_funcs[0].x
         
@@ -1185,7 +1185,7 @@ def log1p(x):
     """
     if isinstance(x,ADF):
         
-        ad_funcs = map(to_auto_diff,[x])
+        ad_funcs = list(map(to_auto_diff,[x]))
 
         x = ad_funcs[0].x
         
@@ -1246,7 +1246,7 @@ def sin(x):
     Return the sine of x, in radians.
     """
     if isinstance(x,ADF):
-        ad_funcs = map(to_auto_diff,[x])
+        ad_funcs = list(map(to_auto_diff,[x]))
 
         x = ad_funcs[0].x
         
@@ -1295,7 +1295,7 @@ def sinh(x):
     Return the hyperbolic sine of x.
     """
     if isinstance(x,ADF):
-        ad_funcs = map(to_auto_diff,[x])
+        ad_funcs = list(map(to_auto_diff,[x]))
 
         x = ad_funcs[0].x
         
@@ -1354,7 +1354,7 @@ def tan(x):
     Return the tangent of x, in radians.
     """
     if isinstance(x,ADF):
-        ad_funcs = map(to_auto_diff,[x])
+        ad_funcs = list(map(to_auto_diff,[x]))
 
         x = ad_funcs[0].x
         
@@ -1403,7 +1403,7 @@ def tanh(x):
     Return the hyperbolic tangent of x.
     """
     if isinstance(x,ADF):
-        ad_funcs = map(to_auto_diff,[x])
+        ad_funcs = list(map(to_auto_diff,[x]))
 
         x = ad_funcs[0].x
         
@@ -1453,7 +1453,7 @@ def trunc(x):
     long integer). Uses the ``__trunc__`` method.
     """
     if isinstance(x,ADF):
-        ad_funcs = map(to_auto_diff,[x])
+        ad_funcs = list(map(to_auto_diff,[x]))
 
         x = ad_funcs[0].x
         
