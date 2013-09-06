@@ -178,7 +178,6 @@ def _vectorize(func):
     n = func.__name__
     m = func.__module__
     d = func.__doc__
-    a = func.func_code.co_varnames
     
     vectorized_function.__name__ = n
     vectorized_function.__module__ = m
