@@ -193,15 +193,26 @@ to be distinct*:
 
 >>> u = adnumber(0.1, 'u')  # Tag
 >>> v = adnumber(3.14, 'v')
+
 >>> sum_value = u+2*v/u
 >>> sum_value
 ad(62.9)
 >>> sum_value.d()
 {ad(0.1, u): -626.9999999999999, ad(3.14, v): 20.0}
+
 >>> sum_value.gradient([u, v])
 [-626.9999999999999, 20.0]
+
 >>> sum_value.hessian([u, v])
 [[12559.999999999998, -199.99999999999997], [-199.99999999999997, 0.0]]
+
+The **jacobian matrix** can be easily created for multiple dependent objects,
+where each row is the gradient of the dependent variables with respect to
+each of the independent variables, *in the order specified*:
+
+>>> from ad import jacobian
+>>> jacobian([square, sum_value], [x, u, v])
+[[4.0, 0.0, 0.0], [0.0, -626.9999999999999, 20.0]]
 
 
 .. index:: comparison operators

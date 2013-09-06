@@ -11,7 +11,7 @@ PAPEROPT_a4     = -D latex_paper_size=a4
 PAPEROPT_letter = -D latex_paper_size=letter
 ALLSPHINXOPTS   = -d _build/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
 
-.PHONY: help clean html dirhtml pickle json htmlhelp qthelp latex changes linkcheck doctest
+.PHONY: help clean html dirhtml pickle json htmlhelp qthelp changes linkcheck doctest # latex 
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
@@ -21,7 +21,7 @@ help:
 	@echo "  json      to make JSON files"
 	@echo "  htmlhelp  to make HTML files and a HTML help project"
 	@echo "  qthelp    to make HTML files and a qthelp project"
-	@echo "  latex     to make LaTeX files, you can set PAPER=a4 or PAPER=letter"
+# 	@echo "  latex     to make LaTeX files, you can set PAPER=a4 or PAPER=letter"
 	@echo "  changes   to make an overview of all changed/added/deprecated items"
 	@echo "  linkcheck to check all external links for integrity"
 	@echo "  doctest   to run all doctests embedded in the documentation (if enabled)"
@@ -30,8 +30,8 @@ clean:
 	-rm -rf _build/*
 
 # The HTML needs latex because the PDF version is linked to:
-html: latex
-	(cd _build/latex; make all-pdf)
+html: # latex
+# 	(cd _build/latex; make all-pdf)
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) _build/html
 	@echo
 	@echo "Build finished. The HTML pages are in _build/html."
@@ -66,12 +66,12 @@ qthelp:
 	@echo "To view the help file:"
 	@echo "# assistant -collectionFile _build/qthelp/uncertaintiesPythonpackage.qhc"
 
-latex:
-	$(SPHINXBUILD) -b latex $(ALLSPHINXOPTS) _build/latex
-	@echo
-	@echo "Build finished; the LaTeX files are in _build/latex."
-	@echo "Run \`make all-pdf' or \`make all-ps' in that directory to" \
-	      "run these through (pdf)latex."
+# latex:
+# 	$(SPHINXBUILD) -b latex $(ALLSPHINXOPTS) _build/latex
+# 	@echo
+# 	@echo "Build finished; the LaTeX files are in _build/latex."
+# 	@echo "Run \`make all-pdf' or \`make all-ps' in that directory to" \
+# 	      "run these through (pdf)latex."
 
 changes:
 	$(SPHINXBUILD) -b changes $(ALLSPHINXOPTS) _build/changes

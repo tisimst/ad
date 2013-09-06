@@ -15,7 +15,8 @@ from datetime import date
 
 import sys, os
 
-sys.path.insert(0, '../..')
+sys.path.insert(0, os.path.abspath('..'))
+
 import ad
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -179,10 +180,10 @@ htmlhelp_basename = 'adPythonPackagedoc'
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
-latex_documents = [
-  ('index_TOC', 'adPythonPackage.tex', u'ad Python package Documentation',
-   u'Abraham Lee', 'manual'),
-]
+# latex_documents = [
+#   ('index_TOC', 'adPythonPackage.tex', u'ad Python package Documentation',
+#   u'Abraham Lee', 'manual'),
+# ]
 
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
