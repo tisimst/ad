@@ -149,4 +149,4 @@ for xi, yi in zip((2, 2.0), (3, 3.0)):
                                                  [1.0, 0.0, 1.0]], \
         jacobian([z_mul, z_add], [x, 1, y])
     
-    print '** All tests passed successfully for xi={:} and yi={:}!'.format(xi, yi)
+    print('** All tests passed successfully for xi={:} and yi={:}!'.format(xi, yi))
