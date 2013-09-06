@@ -1,5 +1,5 @@
-import os
-#from setuptools import setup
+import os, sys
+from setuptools import setup
 import distutils.core
 
 # Building through 2to3, for Python 3 (see also setup(...,
@@ -12,8 +12,11 @@ except ImportError:
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
-#setup(
-distutils.core.setup(
+extras = {}
+if sys.version_info >= (3,):
+    extra['use_2to3'] = True
+
+setup(
     name='ad',
     version='1.1.5',
     author='Abraham Lee',
@@ -55,5 +58,5 @@ distutils.core.setup(
         'Topic :: Utilities'
         ],
     cmdclass={'build_py': build_py},
-    use_2to3=True,
+    **extras
     )
