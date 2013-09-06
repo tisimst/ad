@@ -15,7 +15,7 @@ install:
   - if $NUMPY; then sudo apt-get install -qq python$PY-numpy; fi
 
 script:
-  - if $PY -eq 3; then 2to3 -w .; fi
+  - if $PY -eq 3; then python$PY -c "import sys; from lib2to3.main import main; sys.exit(main('lib2to3.fixes'))" -w .; fi
   - python$PY setup.py install --user
 
   - python$PY test_ad.py
