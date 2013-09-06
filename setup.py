@@ -1,5 +1,5 @@
 import os, sys
-from setuptools import setup
+#from setuptools import setup
 import distutils.core
 
 # Building through 2to3, for Python 3 (see also setup(...,
@@ -16,7 +16,7 @@ extras = {}
 if sys.version_info >= (3,):
     extra['use_2to3'] = True
 
-setup(
+distutils.core.setup(
     name='ad',
     version='1.1.5',
     author='Abraham Lee',
