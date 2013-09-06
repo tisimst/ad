@@ -14,7 +14,7 @@ def read(fname):
 
 extras = {}
 if sys.version_info >= (3,):
-    extra['use_2to3'] = True
+    extras['use_2to3'] = True
 
 distutils.core.setup(
     name='ad',
