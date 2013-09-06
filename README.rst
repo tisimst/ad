@@ -27,6 +27,8 @@ From the Wikipedia entry on `Automatic differentiation`_ (AD):
 
 See the `package documentation`_ for more details and examples.
 
+.. image:: https://travis-ci.org/tisimst/ad.png?branch=master
+
 Basic examples
 --------------
 
