@@ -269,7 +269,7 @@ class ADF(object):
             True
             
         """
-        if not self._lc.has_key(self):
+        if self not in self._lc:
             self._lc[self] = 1.0
             self._qc[self] = 0.0
         
