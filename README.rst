@@ -199,15 +199,15 @@ You have several easy, convenient options to install the ``ad`` package
 Python 3
 --------
 
-To use this package with Python 3.x, you will need to run the ``2to3`` tool at
-the command-line using the following syntax while in the unzipped ``ad`` 
-directory::
+Download the file below, unzip it to any directory, and run::
 
-    $ 2to3 -w .
+    $ python setup.py install
+
+or::
+
+    $ python3 setup.py install
     
-This should take care of the main changes required. Then, run
-``python3 setup.py install``. If bugs continue to pop up,
-please email the author.
+If bugs continue to pop up, please email the author.
     
 Contact
 -------

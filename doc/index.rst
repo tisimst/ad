@@ -170,7 +170,7 @@ external dependency (the `NumPy`_ package is optional). This makes
 Future developments
 ===================
 
-Planned future developments include:
+Possible future developments include:
 
 - increased support for `NumPy`_: new linear algebra methods 
   (eigenvalue and QR decompositions, determinant, etc.),
