@@ -16,6 +16,8 @@ extras = {}
 if sys.version_info >= (3,):
     extras['use_2to3'] = True
 
+readme = 'README.rst'
+
 distutils.core.setup(
     name='ad',
     version='1.1.6',
@@ -24,7 +26,9 @@ distutils.core.setup(
     description='Fast, transparent first- and second-order automatic differentiation',
     url='http://pythonhosted.org/ad',
     license='BSD License',
-    long_description=read('README.rst'),
+    long_description=read(readme),
+    package_data={'': [readme]},
+    include_package_data=True,
     packages=['ad', 'ad.admath'],
     keywords=[
         'automatic differentiation',
