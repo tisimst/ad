@@ -16,7 +16,7 @@ extras = {}
 if sys.version_info >= (3,):
     extras['use_2to3'] = True
 
-readme = 'README.rst'
+readme = 'README'
 
 distutils.core.setup(
     name='ad',
@@ -28,7 +28,7 @@ distutils.core.setup(
     license='BSD License',
     long_description=read(readme),
     package_data={'': [readme]},
-    include_package_data=True,
+    #include_package_data=True,
     packages=['ad', 'ad.admath'],
     keywords=[
         'automatic differentiation',
