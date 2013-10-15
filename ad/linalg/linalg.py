@@ -196,8 +196,8 @@ def lu(A):
     P : 2d-array
         The pivoting matrix used in the decomposition
     
-    Example
-    -------
+    Examples
+    --------
     Example 1::
     
         >>> A = [[1, 3, 5],
@@ -302,7 +302,7 @@ def solve(A, b):
         
     """
     try:
-        A = np.matrix(A)#, dtype=np.float64)
+        A = np.matrix(A)
     except Exception:
         raise Exception('A must be a 2-dimensional array')
     assert A.shape[0]>=A.shape[1], 'A must not have less rows than columns'
@@ -312,7 +312,7 @@ def solve(A, b):
     
     # Make the LHS array square if it isn't already and adjust RHS if needed
     if A.shape[0]>A.shape[1]:
-        b = A.T*A
+        b = A.T*b
         A = A.T*A
         
     eqs = np.column_stack((A, b))
@@ -524,7 +524,6 @@ def polyfit(x, y, n):
         >>> polyfit(x, y, 2)
         array([ 1.,  2.,  3.])
         
-
     """
     a = np.empty((len(x), n + 1))
     for i in xrange(a.shape[0]):

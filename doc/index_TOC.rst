@@ -6,4 +6,5 @@ Table of Contents
 
    Overview <index>
    user_guide
+   linalg
 
