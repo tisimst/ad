@@ -25,7 +25,7 @@ From the Wikipedia entry on `Automatic differentiation`_ (AD):
     repeatedly to these operations, derivatives of arbitrary order can be 
     computed automatically, and accurate to working precision."
 
-See the `package documentation`_ for more details and examples.
+See the `package documentation`_ for details and examples.
 
 .. image:: https://travis-ci.org/tisimst/ad.png?branch=master
 
@@ -175,6 +175,22 @@ Main Features
   
 - **Automatic gradient and hessian function generator** for optimization 
   studies using `scipy.optimize`_ routines with ``gh(your_func_here)``.
+
+- **Compatible Linear Algebra Routines** in the ``ad.linalg`` submodule, 
+  similar to those found in NumPy's ``linalg`` submodule, that are not 
+  dependent on LAPACK. There are currently:
+  
+  a. Decompositions
+     
+     1. ``chol``: Cholesky Decomposition
+     2. ``lu``: LU Decomposition
+     3. ``qr``: QR Decomposition
+  
+  b. Solving equations and inverting matrices
+     
+     1. ``solve``: General solver for linear systems of equations
+     2. ``lstsq``: Least-squares solver for linear systems of equations
+     3. ``inv``: Solve for the (multiplicative) inverse of a matrix
 
 Installation
 ------------
