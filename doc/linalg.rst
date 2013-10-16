@@ -27,7 +27,7 @@ meant to introduce theory for the methods, nor to show an exhaustive
 set of examples as to their usage. They simply describe the respective
 algorithm's usage with some relevant examples. Several algorithms
 have been borrowed from the tasks described at 
-`RosettaCode <rosettacode.org>`.
+`RosettaCode <http://rosettacode.org>`_.
 
 Decompositions
 ==============
@@ -40,7 +40,7 @@ Cholesky Decomposition
 ----------------------
 
 `Cholesky decomposition`_ involves taking a symmetric, positive-definite 
-matrix A and decomposing it into L such that :math:`A=L*L^T=U^T*U`, 
+matrix A and decomposing it into L such that A=LL'=U'U, 
 where L is a lower triangular matrix and U is an upper triangular matrix.
     
 Example 1::
@@ -83,8 +83,8 @@ LU Decomposition
 
 `LU Decomposition`_ factors a matrix as the product of a lower triangular
 matrix and an upper triangular matrix, and in this case, a pivot or
-permutation matrix as well. The decomposition can be viewd as the matrix
-form of `guassian elimination`. Computers usually solve square systems of
+permutation matrix as well. The decomposition can be viewed as the matrix
+form of `gaussian elimination`_. Computers usually solve square systems of
 linear equations using the LU decomposition, and it is also a key step
 when inverting a matrix, or computing the determinant of a matrix.
 
@@ -139,12 +139,14 @@ Example 2::
 QR Decomposition
 ----------------
 
-`QR Decomposition`_ is applicable to any m-by-n matrix *A* and decomposes
-into :math:`A=QR` where *Q* is an orthogonal matrix of size m-by-m and
+`QR decomposition <http://en.wikipedia.org/wiki/QR_decomposition>`_ is 
+applicable to any m-by-n matrix *A* and decomposes
+into A=QR where *Q* is an orthogonal matrix of size m-by-m and
 *R* is an upper triangular matrix of size m-by-n. QR decomposition provides
-an alternative way of `solving the systems of equations <least squares>`
-:math:`Ax=b` without inverting the matrix *A*. The fact that *Q* is 
-orthogonal means that :math:`Q^T*Q=I`, so that :math:`Ax=b` is equivalent to :math:`Rx=Q^T*b`, which is easier to solve since *R* is triangular.
+an alternative way of `solving the systems of equations <least squares_>`_
+Ax=b without inverting the matrix *A*. The fact that *Q* is 
+orthogonal means that Q'Q=I, so that Ax=b is equivalent to Rx=Q'b, 
+which is easier to solve since *R* is triangular.
     
 Example of a square input matrix::
 
@@ -198,8 +200,8 @@ General linear system solver
 ----------------------------
 
 The general solver for linear systems of equations uses 
-`guassian elimination`_. One or multiple columns in the RHS can be input,
-like when solving for the `matrix inverse <inv>`.
+`gaussian elimination`_. One or multiple columns in the RHS can be input,
+like when solving for the `matrix inverse <inv_>`_.
 
 Example::
 
@@ -216,7 +218,7 @@ Least-squares linear system solver
 ----------------------------------
 
 Solving a system of linear equations using the `least squares`_ method
-involves the usage of `QR decomposition <least squares>`_.
+involves the usage of `QR decomposition <qr_>`_.
 
 Example: Fit a quadratic line to some experimental data::
 

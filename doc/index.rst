@@ -60,11 +60,6 @@ Available documentation
 
 The :doc:`user_guide` details many of the features of this package.
 
-.. only:: html
-
-   A :download:`PDF version <_build/latex/adPythonPackage.pdf>` 
-   of the documentation is also available.
-
 Additional information is available through the pydoc_ command, which 
 gives access to many of the documentation strings included in the code.
 
