@@ -20,7 +20,7 @@ readme = 'README'
 
 distutils.core.setup(
     name='ad',
-    version='1.1.7',
+    version='1.2.0',
     author='Abraham Lee',
     author_email='tisimst@gmail.com',
     description='Fast, transparent first- and second-order automatic differentiation',
@@ -29,7 +29,7 @@ distutils.core.setup(
     long_description=read(readme),
     package_data={'': [readme]},
     #include_package_data=True,
-    packages=['ad', 'ad.admath'],
+    packages=['ad', 'ad.admath', 'ad.linalg'],
     keywords=[
         'automatic differentiation',
         'first order',
@@ -37,7 +37,8 @@ distutils.core.setup(
         'derivative',
         'algorithmic differentiation',
         'computational differentiation',
-        'optimization'
+        'optimization',
+        'linear algebra'
         ],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
