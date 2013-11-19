@@ -49,12 +49,12 @@ def to_auto_diff(x):
         type(x))
         )
         
-def _apply_chain_rule(ad_funcs,variables,lc_wrt_args,qc_wrt_args,
-                           cp_wrt_args):
+def _apply_chain_rule(ad_funcs, variables, lc_wrt_args, qc_wrt_args, 
+                      cp_wrt_args):
     """
-    This function applies the first and second-order chain rule to calculate the
-    derivatives with respect to original variables (i.e., objects created with
-    the ``adnumber(...)`` constructor).
+    This function applies the first and second-order chain rule to calculate
+    the derivatives with respect to original variables (i.e., objects created 
+    with the ``adnumber(...)`` constructor).
     
     For reference:
     - ``lc`` refers to "linear coefficients" or first-order terms
@@ -62,6 +62,8 @@ def _apply_chain_rule(ad_funcs,variables,lc_wrt_args,qc_wrt_args,
     - ``cp`` refers to "cross-product" second-order terms
     
     """
+    num_funcs = len(ad_funcs)
+    
     # Initial value (is updated below):
     lc_wrt_vars = dict((var, 0.) for var in variables)
     qc_wrt_vars = dict((var, 0.) for var in variables)
@@ -73,38 +75,35 @@ def _apply_chain_rule(ad_funcs,variables,lc_wrt_args,qc_wrt_args,
 
     # The chain rule is used (we already have
     # derivatives_wrt_args):
-    for j,var1 in enumerate(variables):
-        for k,var2 in enumerate(variables):
-            for (f, dh, d2h) in zip(ad_funcs,lc_wrt_args,qc_wrt_args):
+    for j, var1 in enumerate(variables):
+        for k, var2 in enumerate(variables):
+            for (f, dh, d2h) in zip(ad_funcs, lc_wrt_args, qc_wrt_args):
                 
                 if j==k:
+                    fdv1 = f.d(var1)
                     # first order terms
-                    tmp = dh*f.d(var1)
-                    lc_wrt_vars[var1] += tmp
+                    lc_wrt_vars[var1] += dh*fdv1
 
                     # pure second-order terms
-                    tmp = dh*f.d2(var1) + d2h*f.d(var1)**2
-                    qc_wrt_vars[var1] += tmp
+                    qc_wrt_vars[var1] += dh*f.d2(var1) + d2h*fdv1**2
 
                 elif j<k:
                     # cross-product second-order terms
-                    tmp = dh*f.d2c(var1,var2)
-                    cp_wrt_vars[(var1,var2)] += tmp
-                    tmp = d2h*f.d(var1)*f.d(var2)
-                    cp_wrt_vars[(var1,var2)] += tmp
+                    tmp = dh*f.d2c(var1, var2) + d2h*f.d(var1)*f.d(var2)
+                    cp_wrt_vars[(var1, var2)] += tmp
 
             # now add in the other cross-product contributions to second-order
             # terms
-            if j==k and len(ad_funcs)>1:
+            if j==k and num_funcs>1:
                 tmp = 2*cp_wrt_args*ad_funcs[0].d(var1)*ad_funcs[1].d(var1)
                 qc_wrt_vars[var1] += tmp
 
-            elif j<k and len(ad_funcs)>1:
+            elif j<k and num_funcs>1:
                 tmp = cp_wrt_args*(ad_funcs[0].d(var1)*ad_funcs[1].d(var2) + \
                                    ad_funcs[0].d(var2)*ad_funcs[1].d(var1))
-                cp_wrt_vars[(var1,var2)] += tmp
+                cp_wrt_vars[(var1, var2)] += tmp
                 
-    return (lc_wrt_vars,qc_wrt_vars,cp_wrt_vars)
+    return (lc_wrt_vars, qc_wrt_vars, cp_wrt_vars)
     
 def _floor(x):
     """
@@ -546,7 +545,8 @@ class ADF(object):
             [[-0.08838835,  1.33381153],
              [ 1.33381153,  0.48045301]]
 
-            >>> z.hessian([y, 3, 0.4, x, -19])
+            >>> z.hessian([y, 3, 0.4, x, -19])    
+        
             [[ 0.48045301,  0.        ,  0.        ,  1.33381153,  0.        ],
              [ 0.        ,  0.        ,  0.        ,  0.        ,  0.        ],
              [ 0.        ,  0.        ,  0.        ,  0.        ,  0.        ],
@@ -580,7 +580,7 @@ class ADF(object):
         return variables
     
     def __add__(self, val):
-        ad_funcs = list(map(to_auto_diff, (self, val)))
+        ad_funcs = [self, to_auto_diff(val)]  # list(map(to_auto_diff, (self, val)))
 
         x = ad_funcs[0].x
         y = ad_funcs[1].x
@@ -618,10 +618,10 @@ class ADF(object):
         This method shouldn't need any modification if __add__ has
         been defined
         """
-        return self+val
+        return self + val
 
     def __mul__(self, val):
-        ad_funcs = list(map(to_auto_diff, (self, val)))
+        ad_funcs = [self, to_auto_diff(val)]  # list(map(to_auto_diff, (self, val)))
 
         x = ad_funcs[0].x
         y = ad_funcs[1].x
@@ -667,7 +667,7 @@ class ADF(object):
         return self.__truediv__(val)
     
     def __truediv__(self, val):
-        ad_funcs = list(map(to_auto_diff, (self, val)))
+        ad_funcs = [self, to_auto_diff(val)]  # list(map(to_auto_diff, (self, val)))
 
         x = ad_funcs[0].x
         y = ad_funcs[1].x
@@ -732,7 +732,7 @@ class ADF(object):
         return -1*self + val
 
     def __pow__(self, val):
-        ad_funcs = list(map(to_auto_diff, (self, val)))
+        ad_funcs = [self, to_auto_diff(val)]  # list(map(to_auto_diff, (self, val)))
         
         x = ad_funcs[0].x
         y = ad_funcs[1].x
@@ -805,7 +805,7 @@ class ADF(object):
         return -(self+1)
 
     def __abs__(self):
-        ad_funcs = list(map(to_auto_diff, [self]))
+        ad_funcs = [self]  # list(map(to_auto_diff, [self]))
 
         x = ad_funcs[0].x
         
@@ -828,11 +828,10 @@ class ADF(object):
         # catch the x=0 exception
         try:
             lc_wrt_args = [x/abs(x)]
-            qc_wrt_args = [1/abs(x)-(x**2)/abs(x)**3]
         except ZeroDivisionError:
             lc_wrt_args = [0.0]
-            qc_wrt_args = [0.0]
-            
+        
+        qc_wrt_args = [0.0]
         cp_wrt_args = 0.0
 
         ########################################
@@ -879,22 +878,23 @@ class ADF(object):
         
     # let the respective numeric types take care of the comparison operators
     def __eq__(self, val):
-        ad_funcs = list(map(to_auto_diff, [self, val]))
+        ad_funcs = [self, to_auto_diff(val)]  # list(map(to_auto_diff, [self, val]))
         return ad_funcs[0].x==ad_funcs[1].x
     
     def __ne__(self, val):
         return not self==val
 
     def __lt__(self, val):
-        ad_funcs = list(map(to_auto_diff, [self, val]))
+        ad_funcs = [self, to_auto_diff(val)]  # list(map(to_auto_diff, [self, val]))
         return ad_funcs[0].x<ad_funcs[1].x
     
     def __le__(self, val):
         return (self<val) or (self==val)
     
     def __gt__(self, val):
-        ad_funcs = list(map(to_auto_diff, [self, val]))
-        return ad_funcs[0].x>ad_funcs[1].x
+        # ad_funcs = list(map(to_auto_diff, [self, val]))
+        # return ad_funcs[0].x>ad_funcs[1].x
+        return not self<=val
     
     def __ge__(self, val):
         return (self>val) or (self==val)
