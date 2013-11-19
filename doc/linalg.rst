@@ -227,7 +227,12 @@ Example: Fit a quadratic line to some experimental data::
     >>> y = y + np.random.randn(len(y))  # give the output a random offset
     >>> A = np.vstack([np.ones(len(x)), x, x**2]).T
     >>> A
-    array([])
+    array([[  1.,   0.,   0.],
+           [  1.,   1.,   1.],
+           [  1.,   2.,   4.],
+           [  1.,   3.,   9.],
+           [  1.,   4.,  16.],
+           [  1.,   5.,  25.]])
     >>> b = lstsq(A, y)  # the quadratic fit coefficients (b0 + b1*x + b2*x**2)
     
 Now, we can see what the fit looks like compared to the original data using
