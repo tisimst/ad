@@ -16,7 +16,7 @@ try:
 except ImportError:
     numpy_installed = False
 
-__version_info__ = (1, 2, 0)
+__version_info__ = (1, 2, 1)
 __version__ = '.'.join(list(map(str, __version_info__)))
 
 __author__ = 'Abraham Lee'
@@ -111,7 +111,7 @@ def _floor(x):
     equal to x. This is required for the "mod" function.
     """
     if isinstance(x,ADF):
-        ad_funcs = list(map(to_auto_diff,[x]))
+        ad_funcs = [to_auto_diff(x)]
 
         x = ad_funcs[0].x
         
@@ -217,7 +217,6 @@ class ADF(object):
                [ 1.,  0.]])
 
     """
-    __slots__ = ['x', '_lc', '_qc', '_cp', 'tag', '_trace']
     
     def __init__(self, value, lc, qc, cp, tag=None):
         # I want to be able to perform complex derivatives, so "x" will
