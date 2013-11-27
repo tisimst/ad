@@ -16,7 +16,7 @@ try:
 except ImportError:
     numpy_installed = False
 
-__version_info__ = (1, 2, 1)
+__version_info__ = (1, 2, 2)
 __version__ = '.'.join(list(map(str, __version_info__)))
 
 __author__ = 'Abraham Lee'
@@ -226,7 +226,6 @@ class ADF(object):
         self._qc = qc
         self._cp = cp
         self.tag = tag
-        self._trace = None
     
     def __hash__(self):
         return id(self)
@@ -910,10 +909,6 @@ class ADV(ADF):
         # the second is always 0.0
         super(ADV, self).__init__(value, {self:1.0}, {self:0.0}, {}, tag=tag)
 
-        # by generating this random trace, it should preserve relations even
-        # after pickling and un-pickling (not sure this is working yet...)
-        self._trace = randint(1,100000000)
-        
 def adnumber(x, tag=None):
     """
     Constructor of automatic differentiation (AD) variables, or numbers that
