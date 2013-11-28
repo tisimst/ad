@@ -46,7 +46,7 @@ author.
 from __future__ import division
 import math
 import cmath
-from ..ad import __author__, ADF, to_auto_diff, _apply_chain_rule
+from ad import __author__, ADF, to_auto_diff, _apply_chain_rule
 
 try:
     import numpy as np
