@@ -763,7 +763,7 @@ class ADF(object):
         else:
             x = x.real
             y = y.real
-            if x>0 and ad_funcs[1].d(ad_funcs[1])!=0:
+            if x>0:
                 lc_wrt_args = [y*x**(y - 1), x**y*math.log(x)]
                 qc_wrt_args = [y*(y - 1)*x**(y - 2), x**y*(math.log(x))**2]
                 cp_wrt_args = x**y*(y*math.log(x) + 1)/x

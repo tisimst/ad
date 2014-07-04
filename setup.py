@@ -20,7 +20,7 @@ readme = 'README'
 
 distutils.core.setup(
     name='ad',
-    version='1.2.2',
+    version='1.2.3',
     author='Abraham Lee',
     author_email='tisimst@gmail.com',
     description='Fast, transparent first- and second-order automatic differentiation',
