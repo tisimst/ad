@@ -1173,3 +1173,51 @@ def jacobian(adfuns, advars):
             jac.append([0.0]*len(advars))
     
     return jac
+
+if numpy_installed:
+    def d(a, b, out=None):
+        """
+        Take a derivative of a with respect to b.
+        
+        This is a numpy ufunc, so the derivative will be broadcast over both a and b.
+        
+        a: scalar or array over which to take the derivative
+        b: scalar or array of variable(s) to take the derivative with respect to
+        
+        >>> x = adnumber(3)
+        >>> y = x**2
+        >>> d(y, x)
+        array(6.0, dtype=object)
+        
+        >>> import numpy as np
+        >>> from ad.admath import exp
+        >>> x = adnumber(np.linspace(0,2,5))
+        >>> y = x**2
+        >>> d(y, x)
+        array([0.0, 1.0, 2.0, 3.0, 4.0], dtype=object)
+        """
+        it = numpy.nditer([a, b, out],
+                flags = ['buffered', 'refs_ok'],
+                op_flags = [['readonly'], ['readonly'],
+                            ['writeonly', 'allocate', 'no_broadcast']])
+        for y, x, deriv in it:
+            (v1,), (v2,) = y.flat, x.flat
+            deriv[...] = v1.d(v2)
+        return it.operands[2]
+    
+    def d2(a, b, out=None):
+        """
+        Take a second derivative of a with respect to b.
+        
+        This is a numpy ufunc, so the derivative will be broadcast over both a and b.
+        
+        See d() and adnumber.d2() for more details.
+        """
+        it = numpy.nditer([a, b, out],
+                flags = ['buffered', 'refs_ok'],
+                op_flags = [['readonly'], ['readonly'],
+                            ['writeonly', 'allocate', 'no_broadcast']])
+        for y, x, deriv in it:
+            (v1,), (v2,) = y.flat, x.flat
+            deriv[...] = v1.d2(v2)
+        return it.operands[2]
