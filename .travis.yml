@@ -14,7 +14,7 @@ env:
     - NONUMPY=true
 
 install:
-  - pip install sphinx
+  - if [[ $TRAVIS_PYTHON_VERSION != "3.2" ]]; then pip install sphinx; fi
   - if $NONUMPY; then pip uninstall -y numpy; fi
   - python setup.py install
   - pip freeze
@@ -22,4 +22,4 @@ install:
 script:
   - nosetests -vv test_ad.py
   - cd doc
-  - make html
+  - if [[ $TRAVIS_PYTHON_VERSION != "3.2" ]]; then make html; fi
