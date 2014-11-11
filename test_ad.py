@@ -139,15 +139,15 @@ class AdTest:
         'test coercion methods'
         x = self.x
         if isinstance(x.x, (int, float)):
-            msg = '{:} and {:}'.format(int(x), type(int(x)))
+            msg = '{0:} and {1:}'.format(int(x), type(int(x)))
             self.assertEqual(int(x), 2, msg)
             self.assertTrue(isinstance(int(x), int), msg)
              
-            msg = '{:} and {:}'.format(float(x), type(float(x)))
+            msg = '{0:} and {1:}'.format(float(x), type(float(x)))
             self.assertEqual(float(x), 2.0)
             self.assertTrue(isinstance(float(x), float))
             
-            msg = '{:} and {:}'.format(complex(x), type(complex(x)))    
+            msg = '{0:} and {1:}'.format(complex(x), type(complex(x)))    
             self.assertEqual(complex(x), 2+0j)
             self.assertTrue(isinstance(complex(x), complex))
 

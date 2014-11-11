@@ -14,6 +14,7 @@ env:
     - NONUMPY=true
 
 install:
+  - pip install sphinx
   - if $NONUMPY; then pip uninstall -y numpy; fi
   - python setup.py install
   - pip freeze
