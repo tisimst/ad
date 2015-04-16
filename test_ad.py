@@ -108,6 +108,11 @@ for xi, yi in zip((2, 2.0), (3, 3.0)):
         [0, 4 + 12*math.log(2),                 12]], \
         z_pow.hessian([z_mul, y, x])
     
+    for base in (2, 10, math.e):
+        z_log = log(x, base)
+        assert z_log.d(x) == 1. / (x * ln(base))
+        assert z_log.d2(x) == -1. / (x**2 * ln(base))
+
     z_mod = x%y
     assert z_mod==(x - y*ad._floor(x/y)), z_mod
     
