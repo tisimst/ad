@@ -1101,8 +1101,8 @@ def log(x, base=None):
         # Calculation of the derivatives with respect to the arguments
         # of f (ad_funcs):
 
-        lc_wrt_args = [1./x]
-        qc_wrt_args = [-1./x**2]
+        lc_wrt_args = [1./(x * ln(base))]
+        qc_wrt_args = [-1./(x**2 * ln(base))]
         cp_wrt_args = 0.0
 
         ########################################

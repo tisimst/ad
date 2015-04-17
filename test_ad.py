@@ -126,6 +126,11 @@ class AdTest:
             [0,   8*math.log(2)**2, 4 + 12*math.log(2)], 
             [0, 4 + 12*math.log(2),                 12]])
         
+        for base in (2, 10, math.e):
+            z_log = log(x, base)
+            self.assertEqual(z_log.d(x), 1./(x*ln(base)))
+            self.assertEqual(z_log.d2(x), -1./(x**2*ln(base))
+            
         z_mod = x%y
         self.assertEqual(z_mod, (x - y*ad._floor(x/y)))
         
