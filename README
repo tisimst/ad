@@ -240,6 +240,10 @@ The author expresses his thanks to :
   code insight and inspiration
 - Stephen Marks, professor at Pomona College, for useful feedback concerning 
   the interface with optimization routines in ``scipy.optimize``.
+- Wendell Smith, for updating testing functionality and numerous other useful
+  function updates
+- Jonathan Terhorst, for catching a bug that made derivatives of logarithmic
+  functions (base != e) give the wrong answers.
 
 
 .. _NumPy: http://numpy.scipy.org/
