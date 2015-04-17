@@ -14,6 +14,12 @@ import math
 import cmath
 from unittest import TestCase, TestSuite
 
+try:
+    import numpy
+    numpy_installed = True
+except ImportError:
+    numpy_installed = False
+
 ################################################################################
 
     
@@ -180,6 +186,52 @@ class AdTestInt(AdTest, TestCase):
 
 class AdTestFloat(AdTest, TestCase):
     xi, yi = (2.0, 3.0)
+
+if numpy_installed:
+    import numpy as np
+    import numpy.testing
+    
+    def assert_allclose(a, b):
+        a = np.array(a, dtype=float)
+        b = np.array(b, dtype=float)
+        return numpy.testing.assert_allclose(a, b)
+    
+    class NPTests(TestCase):
+        def setUp(self):
+            self.x = adnumber(2)
+            self.x_row = adnumber(np.linspace(0, 2, 5))
+            
+            self.y = np.logspace(0,4,5)
+        
+        def test_deriv(self):
+            """Test ad.d() function"""
+            z = self.y * self.x
+            dz = ad.d(z, self.x)
+            assert_allclose(dz, self.y)
+            
+            z = self.x_row ** 2
+            dz = ad.d(z, self.x_row)
+            assert_allclose(dz, [0.0, 1.0, 2.0, 3.0, 4.0])
+            
+            z = self.y * self.x_row
+            dz = ad.d(z, self.x_row)
+            assert_allclose(dz, self.y)
+        
+        def test_d2(self):
+            """Test ad.d2() function"""
+            z = self.y * exp(-2*self.x)
+            dz = ad.d(z, self.x)
+            ddz = ad.d2(z, self.x)
+            assert_allclose(dz, -2*z)
+            assert_allclose(ddz, 4*z)
+            
+            z = self.x_row ** 2
+            ddz = ad.d2(z, self.x_row)
+            assert_allclose(ddz, 2.)
+            
+            z = self.y * sin(2*self.x_row)
+            ddz = ad.d2(z, self.x_row)
+            assert_allclose(ddz, -4*z)
 
 if __name__ == '__main__':
     unittest.main()
