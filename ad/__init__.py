@@ -16,7 +16,7 @@ try:
 except ImportError:
     numpy_installed = False
 
-__version_info__ = (1, 2, 3)
+__version_info__ = (1, 3)
 __version__ = '.'.join(list(map(str, __version_info__)))
 
 __author__ = 'Abraham Lee'
