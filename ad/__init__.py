@@ -16,7 +16,7 @@ try:
 except ImportError:
     numpy_installed = False
 
-__version_info__ = (1, 2, 2)
+__version_info__ = (1, 2, 3)
 __version__ = '.'.join(list(map(str, __version_info__)))
 
 __author__ = 'Abraham Lee'
@@ -73,8 +73,7 @@ def _apply_chain_rule(ad_funcs, variables, lc_wrt_args, qc_wrt_args,
             if i<j:
                 cp_wrt_vars[(var1,var2)] = 0.
 
-    # The chain rule is used (we already have
-    # derivatives_wrt_args):
+    # The chain rule is used (we already have derivatives_wrt_args):
     for j, var1 in enumerate(variables):
         for k, var2 in enumerate(variables):
             for (f, dh, d2h) in zip(ad_funcs, lc_wrt_args, qc_wrt_args):
