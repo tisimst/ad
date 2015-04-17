@@ -45,7 +45,7 @@ def to_auto_diff(x):
         return ADF(x, {}, {}, {})
 
     raise NotImplementedError(
-        'Automatic differentiation not yet supported for {:} objects'.format(
+        'Automatic differentiation not yet supported for {0:} objects'.format(
         type(x))
         )
         
@@ -284,9 +284,9 @@ class ADF(object):
         object, but assumes self.tag is a string object.
         """
         if self.tag is None:
-            return 'ad({:})'.format(str_func(self.x))
+            return 'ad({0:})'.format(str_func(self.x))
         else:
-            return 'ad({:}, {:})'.format(str_func(self.x), str(self.tag))
+            return 'ad({0:}, {1:})'.format(str_func(self.x), str(self.tag))
         
     def __repr__(self):
         return self._to_general_representation(repr)
@@ -1028,7 +1028,7 @@ def adnumber(x, tag=None):
             return ADV(x, tag)
 
     raise NotImplementedError(
-        'Automatic differentiation not yet supported for {:} objects'.format(
+        'Automatic differentiation not yet supported for {0:} objects'.format(
         type(x))
         )
 

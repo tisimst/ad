@@ -181,7 +181,7 @@ def _vectorize(func):
     
     vectorized_function.__name__ = n
     vectorized_function.__module__ = m
-    doc = 'Vectorized {:} function\n'.format(n)
+    doc = 'Vectorized {0:} function\n'.format(n)
     if d is not None:
         doc += d
     vectorized_function.__doc__ = doc
