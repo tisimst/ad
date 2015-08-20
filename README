@@ -1,6 +1,8 @@
 ``ad`` Package Documentation
 ============================
 
+.. image:: https://travis-ci.org/tisimst/ad.png?branch=master
+
 Overview
 --------
 
@@ -25,136 +27,8 @@ From the Wikipedia entry on `Automatic differentiation`_ (AD):
     repeatedly to these operations, derivatives of arbitrary order can be 
     computed automatically, and accurate to working precision."
 
-See the `package documentation`_ for details and examples.
+**>>** See the `package documentation`_ for details and examples. **<<**
 
-.. image:: https://travis-ci.org/tisimst/ad.png?branch=master
-
-Basic examples
---------------
-
-Let's start with the main import that all numbers use to track derivatives::
-
-    >>> from ad import adnumber
-
-Creating AD objects (either a scalar or an N-dimensional array is acceptable)::
-
-    >>> x = adnumber(2.0)
-    >>> x
-    ad(2.0)
-
-    >>> y = adnumber([1, 2, 3])
-    >>> y
-    [ad(1), ad(2), ad(3)]
-
-    >>> z = adnumber(3, tag='z')  # tags can help track variables
-    >>> z
-    ad(3, z)
-
-Now for some math::
-
-    >>> square = x**2
-    >>> square
-    ad(4.0)
-
-    >>> sum_value = sum(y)
-    >>> sum_value
-    ad(6)
-
-    >>> w = x*z**2
-    >>> w
-    ad(18.0)
-
-Using more advanced math functions like those in the standard `math`_ 
-and `cmath`_ modules::
-
-    >>> from ad.admath import *  # sin, cos, log, exp, sqrt, etc.
-    >>> sin(1 + x**2)
-    ad(-0.9589242746631385)
-
-Calculating derivatives (evaluated at the given input values)::
-
-    >>> square.d(x)  # get the first derivative wrt x
-    4.0
-
-    >>> square.d2(x)  # get the second derivative wrt x
-    2.0
-
-    >>> z.d(x)  # returns zero if the derivative doesn't exist
-    0.0
-
-    >>> w.d2c(x, z)  # second cross-derivatives, order doesn't matter
-    6.0
-
-    >>> w.d2c(z, z)  # equivalent to "w.d2(z)"
-    4.0
-    
-    >>> w.d()  # a dict of all relevant derivatives shown if no input
-    {ad(2.0): 9.0, ad(3, z): 12.0}
-
-Some convenience functions (useful in optimization)::
-
-    >>> w.gradient([x, z])  # show the gradient in the order given
-    [9.0, 12.0]
-
-    >>> w.hessian([x, z])
-    [[0.0, 6.0], [6.0, 4.0]]
-    
-    >>> sum_value.gradient(y)  # works well with input arrays
-    [1.0, 1.0, 1.0]
-    
-    # multiple dependents, multiple independents, first derivatives
-    >>> from ad import jacobian
-    >>> jacobian([w, square], [x, z])
-    [[9.0, 12.0], [4.0, 0.0]]
-
-Working with `NumPy`_ arrays (many functions should work out-of-the-box)::
-
-    >>> import numpy as np
-    >>> arr = np.array([1, 2, 3])
-    >>> a = adnumber(arr)
-
-    >>> a.sum()
-    ad(6)
-
-    >>> a.max()
-    ad(3)
-
-    >>> a.mean()
-    ad(2.0)
-
-    >>> a.var()  # array variance
-    ad(0.6666666666666666)
-
-    >>> print sqrt(a)  # vectorized operations supported with ad operators
-    [ad(1.0) ad(1.4142135623730951) ad(1.7320508075688772)]
-
-Interfacing with `scipy.optimize`_
-----------------------------------
-
-To make it easier to work with the `scipy.optimize`_ module, there's a 
-**convenient way to wrap functions** that will generate appropriate gradient
-and hessian functions::
-
-    >>> from ad import gh  # the gradient and hessian function generator
-    
-    >>> def objective(x):
-    ...     return (x[0] - 10.0)**2 + (x[1] + 5.0)**2
-    
-    >>> grad, hess = gh(objective)  # now gradient and hessian are automatic!
-    
-    >>> from scipy.optimize import minimize
-    >>> x0 = np.array([24, 17])
-    >>> bnds = ((0, None), (0, None))
-    >>> method = 'L-BFGS-B'
-    >>> res = minimize(objective, x0, method=method, jac=grad, bounds=bnds,
-    ...                options={'ftol': 1e-8, 'disp': False})
-    >>> res.x  # optimal parameter values
-    array([ 10.,   0.])
-    >>> res.fun  # optimal objective
-    25.0
-    >>> res.jac  # gradient at optimum
-    array([  7.10542736e-15,   1.00000000e+01])
-    
 Main Features
 -------------
 
@@ -212,19 +86,6 @@ You have several easy, convenient options to install the ``ad`` package
 
 5. Download the *bleeding-edge* version on GitHub_
 
-Python 3
---------
-
-Download the file below, unzip it to any directory, and run::
-
-    $ python setup.py install
-
-or::
-
-    $ python3 setup.py install
-    
-If bugs continue to pop up, please email the author.
-    
 Contact
 -------
 
@@ -244,6 +105,7 @@ The author expresses his thanks to :
   function updates
 - Jonathan Terhorst, for catching a bug that made derivatives of logarithmic
   functions (base != e) give the wrong answers.
+- GitHub user ``fhgd`` for catching a mis-calculation in ``admath.atan2``
 
 
 .. _NumPy: http://numpy.scipy.org/
@@ -256,4 +118,3 @@ The author expresses his thanks to :
 .. _Abraham Lee: mailto:tisimst@gmail.com
 .. _package documentation: http://pythonhosted.org/ad
 .. _GitHub: https://github.com/tisimst/ad
-

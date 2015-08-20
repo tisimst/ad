@@ -4,3 +4,4 @@ build
 MANIFEST
 doc/_build
 *~
+doc/*.zip

@@ -175,9 +175,6 @@ Possible future developments include:
 
 - arbitrary order differentiation.
 
-**Please support the continued development of this program** by using
-`gittip <https://www.gittip.com/tisimst/>`_ by donating $10 or more.
-
 .. index:: support
 
 Contact
@@ -198,13 +195,15 @@ second-order automatic differentation*, Abraham D. Lee,
 Acknowledgments
 ===============
 
-I am greatful to Eric O. Lebigot, author of the `uncertainties package`_,
-who showed me (through his code) how to easily apply the chain rule for
-multivariate formulae.
-
-I would also like to thank `Stephen Marks`_ who contributed with feedback and
-suggestions on using this package with `scipy.optimize`_, which greatly 
-helped improve this program.
+- `Eric O. LEBIGOT (EOL)`_, author of the `uncertainties`_ package, for providing 
+  code insight and inspiration
+- Stephen Marks, professor at Pomona College, for useful feedback concerning 
+  the interface with optimization routines in ``scipy.optimize``.
+- Wendell Smith, for updating testing functionality and numerous other useful
+  function updates
+- Jonathan Terhorst, for catching a bug that made derivatives of logarithmic
+  functions (base != e) give the wrong answers.
+- GitHub user ``fhgd`` for catching a mis-calculation in ``admath.atan2``
 
 .. index:: license
 
@@ -227,7 +226,7 @@ following options can be chosen:
 .. _sent: mailto:tisimst@gmail.com
 .. _Revised BSD License: http://opensource.org/licenses/BSD-3-Clause
 .. _ad package: http://pypi.python.org/pypi/ad/
-.. _uncertainties package: http://pypi.python.org/pypi/uncertainties
+.. _uncertainties: http://pypi.python.org/pypi/uncertainties
 .. _pydoc: http://docs.python.org/library/pydoc.html
 .. _NumPy: http://numpy.scipy.org/
 .. _scipy.optimize: http://docs.scipy.org/doc/scipy/reference/tutorial/optimize.html
