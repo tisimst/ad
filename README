@@ -27,7 +27,7 @@ From the Wikipedia entry on `Automatic differentiation`_ (AD):
     repeatedly to these operations, derivatives of arbitrary order can be 
     computed automatically, and accurate to working precision."
 
-**>>** See the `package documentation`_ for details and examples. **<<**
+>> See the `package documentation`_ for details and examples. <<
 
 Main Features
 -------------
