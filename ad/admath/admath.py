@@ -453,9 +453,9 @@ def atan2(y, x):
             return atan(y/x) - pi
     else:
         if y>0:
-            return +pi
+            return +pi/2
         elif y<0:
-            return -pi
+            return -pi/2
         else:
             return 0.0
     
