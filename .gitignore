@@ -5,3 +5,4 @@ MANIFEST
 doc/_build
 *~
 doc/*.zip
+*.egg-info
